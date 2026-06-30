@@ -16,5 +16,11 @@
     "main_battery": 32,
     "deck_gun": 8,
     "ammunition": 3
+  },
+  "loadout": {
+    "hull_material": "teak",
+    "main_battery": "18pdr",
+    "deck_gun": "carronade",
+    "ammunition": "round_shot"
   }
 }
