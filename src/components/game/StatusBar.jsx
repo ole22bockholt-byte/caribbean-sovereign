@@ -1,8 +1,10 @@
 import React from "react";
-import { Coins, TrendingUp, Boxes, Users, Ship, CalendarDays, Timer } from "lucide-react";
-import { PLAYER, WORLD, getFaction } from "@/lib/mockData";
+import { Coins, TrendingUp, Ship, CalendarDays, Timer } from "lucide-react";
+import { factionFlag } from "@/lib/gameData";
 import { formatGold } from "@/lib/format";
 import Countdown from "./Countdown";
+
+const TICK_INTERVAL_SECONDS = 1800; // Welt-Tick alle 30 Minuten (siehe Automation)
 
 function Stat({ icon: Icon, label, value, accent }) {
   return (
@@ -16,40 +18,43 @@ function Stat({ icon: Icon, label, value, accent }) {
   );
 }
 
-export default function StatusBar() {
-  const faction = getFaction(PLAYER.greatFaction);
-  const totalResources = Object.values(PLAYER.resources).reduce((a, b) => a + b, 0);
+function formatGameDate(iso) {
+  if (!iso) return "—";
+  const d = new Date(iso + "T00:00:00");
+  return d.toLocaleDateString("de-DE", { day: "numeric", month: "long", year: "numeric" });
+}
+
+export default function StatusBar({ player, world, factionByCode }) {
+  const faction = factionByCode?.[player?.factionCode];
 
   return (
     <header className="bg-wood-deep border-b border-line flex items-stretch divide-x divide-[var(--line)]">
       <div className="flex items-center gap-2.5 px-4 py-2">
-        <span className="text-xl" title={faction.name}>{faction.flag}</span>
+        <span className="text-xl" title={faction?.name}>{factionFlag(player?.factionCode)}</span>
         <div className="leading-tight">
           <div className="text-[9px] uppercase tracking-[0.16em] text-ink-dim font-body-game">Großfraktion</div>
-          <div className="text-sm font-display text-ink">{faction.name}</div>
+          <div className="text-sm font-display text-ink">{faction?.name || "—"}</div>
         </div>
       </div>
 
       <div className="flex items-center gap-2.5 px-4 py-2">
         <div className="leading-tight">
           <div className="text-[9px] uppercase tracking-[0.16em] text-ink-dim font-body-game">Kompanie</div>
-          <div className="text-sm font-display text-brass-bright">{PLAYER.companyName}</div>
+          <div className="text-sm font-display text-brass-bright">{player?.companyName || "—"}</div>
         </div>
       </div>
 
       <div className="flex items-center divide-x divide-[var(--line)] flex-1">
-        <Stat icon={Coins} label="Gold" value={formatGold(PLAYER.gold)} accent />
-        <Stat icon={TrendingUp} label="Einfluss" value={formatGold(PLAYER.influence)} />
-        <Stat icon={Boxes} label="Ressourcen" value={formatGold(totalResources)} />
-        <Stat icon={Users} label="Crew" value={PLAYER.crew} />
-        <Stat icon={Ship} label="Schiffe" value={PLAYER.shipCount} />
+        <Stat icon={Coins} label="Gold" value={formatGold(player?.gold || 0)} accent />
+        <Stat icon={TrendingUp} label="Einfluss" value={formatGold(player?.influence || 0)} />
+        <Stat icon={Ship} label="Schiffe" value={player?.ships?.length || 0} />
       </div>
 
       <div className="flex items-center gap-2.5 px-4 py-2">
         <CalendarDays className="w-4 h-4 text-ink-dim" strokeWidth={1.6} />
         <div className="leading-tight">
           <div className="text-[9px] uppercase tracking-[0.16em] text-ink-dim font-body-game">Spieldatum</div>
-          <div className="text-sm font-display text-ink">{WORLD.gameDate}</div>
+          <div className="text-sm font-display text-ink">{formatGameDate(world?.game_date)}</div>
         </div>
       </div>
 
@@ -57,7 +62,7 @@ export default function StatusBar() {
         <Timer className="w-4 h-4 text-brass pulse-dot" strokeWidth={1.6} />
         <div className="leading-tight">
           <div className="text-[9px] uppercase tracking-[0.16em] text-ink-dim font-body-game">Welt-Tick</div>
-          <Countdown seconds={WORLD.tickIntervalSeconds} loop className="text-sm" />
+          <Countdown seconds={TICK_INTERVAL_SECONDS} loop className="text-sm" />
         </div>
       </div>
     </header>
