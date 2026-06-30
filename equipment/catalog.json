@@ -1,0 +1,124 @@
+{
+  "slotCategories": {
+    "hull_material": {
+      "label": "Rumpfmaterial",
+      "parts": [
+        {
+          "id": "oak",
+          "name": "Eichenrumpf",
+          "summary": "Robustes Standardholz, gut verfügbar.",
+          "isDefault": true,
+          "stats": {
+            "Rumpf": "+0%",
+            "Gewicht": "Mittel"
+          }
+        },
+        {
+          "id": "teak",
+          "name": "Teakrumpf",
+          "summary": "Widerstandsfähiger gegen Fäulnis und Beschuss.",
+          "stats": {
+            "Rumpf": "+15%",
+            "Gewicht": "Hoch"
+          }
+        },
+        {
+          "id": "copper_plated",
+          "name": "Kupferbeplankung",
+          "summary": "Schützt vor Bewuchs, erhöht Geschwindigkeit.",
+          "stats": {
+            "Geschwindigkeit": "+1",
+            "Rumpf": "+5%"
+          }
+        }
+      ]
+    },
+    "main_battery": {
+      "label": "Hauptbatterie",
+      "parts": [
+        {
+          "id": "12pdr",
+          "name": "12-Pfünder",
+          "summary": "Standardkanone der Linie.",
+          "isDefault": true,
+          "stats": {
+            "Schaden": 12,
+            "Reichweite": "Mittel"
+          }
+        },
+        {
+          "id": "18pdr",
+          "name": "18-Pfünder",
+          "summary": "Schwerere Geschütze, mehr Durchschlag.",
+          "stats": {
+            "Schaden": 18,
+            "Reichweite": "Mittel"
+          }
+        },
+        {
+          "id": "24pdr",
+          "name": "24-Pfünder",
+          "summary": "Schwere Batterie für Linienschiffe.",
+          "stats": {
+            "Schaden": 24,
+            "Reichweite": "Kurz"
+          }
+        }
+      ]
+    },
+    "deck_gun": {
+      "label": "Decksgeschütze",
+      "parts": [
+        {
+          "id": "swivel",
+          "name": "Drehbasse",
+          "summary": "Leichtes Geschütz gegen Mannschaft.",
+          "isDefault": true,
+          "stats": {
+            "Schaden": 4,
+            "Feuerrate": "Hoch"
+          }
+        },
+        {
+          "id": "carronade",
+          "name": "Karronade",
+          "summary": "Kurze Reichweite, verheerend auf Distanz.",
+          "stats": {
+            "Schaden": 16,
+            "Reichweite": "Sehr kurz"
+          }
+        }
+      ]
+    },
+    "ammunition": {
+      "label": "Munition",
+      "parts": [
+        {
+          "id": "round_shot",
+          "name": "Vollkugel",
+          "summary": "Standardmunition gegen Rumpf.",
+          "isDefault": true,
+          "stats": {
+            "Ziel": "Rumpf"
+          }
+        },
+        {
+          "id": "chain_shot",
+          "name": "Kettenkugel",
+          "summary": "Zerstört Takelage und Segel.",
+          "stats": {
+            "Ziel": "Takelage"
+          }
+        },
+        {
+          "id": "grape_shot",
+          "name": "Kartätsche",
+          "summary": "Streumunition gegen die Crew.",
+          "stats": {
+            "Ziel": "Crew"
+          }
+        }
+      ]
+    }
+  }
+}
