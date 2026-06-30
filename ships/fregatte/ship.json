@@ -14,42 +14,36 @@
   "slots": {
     "hull_material": {
       "count": 1,
-      "default": "oak",
-      "allowedClasses": [
-        "F",
-        "E",
-        "D",
-        "C",
-        "B"
+      "default": "teak",
+      "allowedWeights": [
+        "Leicht",
+        "Standard",
+        "Schwer"
       ]
     },
     "main_battery": {
       "count": 32,
       "default": "18pdr",
-      "allowedClasses": [
-        "E",
-        "D",
-        "C",
-        "B"
+      "allowedWeights": [
+        "Mittelschwer",
+        "Schwer"
       ]
     },
     "deck_gun": {
       "count": 8,
-      "default": "swivel",
-      "allowedClasses": [
-        "F",
-        "E",
-        "D"
+      "default": "carronade",
+      "allowedWeights": [
+        "Leicht",
+        "Schwer"
       ]
     },
     "ammunition": {
       "count": 3,
       "default": "round_shot",
-      "allowedClasses": [
-        "F",
-        "E",
-        "D",
-        "C"
+      "allowedWeights": [
+        "Leicht",
+        "Mittelleicht",
+        "Standard"
       ]
     }
   }
