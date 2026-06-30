@@ -51,8 +51,14 @@ Mehrspieler-Weltsystem — eine gemeinsame Welt entwickelt sich über die Zeit w
 - **Spieler/Akteur**: Kompaniename, Gold, Einfluss, Fraktion, eigene Schiffe.
 - **Schiffe**: Klassen Schaluppe/Brigg/Fregatte/Galeone; Zustände Im Hafen/Unterwegs/
   Im Gefecht/Versenkt/Gekapert; Feuerkraft, Rumpf, Crew.
-- **Welt-Zeit**: Die Welt schreitet über Ticks voran (`world_state.tick_number`,
-  `game_date`, `last_tick_at`). Die Statusleiste zeigt daraus eine laufende Weltzeit.
+- **Welt-Zeit & Spieldatum**: Die Welt schreitet über Ticks voran (`world_state.tick_number`,
+  `game_date`, `last_tick_at`). Aus `last_tick_at` wird clientseitig eine laufende Weltzeit
+  abgeleitet (Hook `src/hooks/useWorldTime.js`: 1 Spielminute pro Echtsekunde). Die
+  Statusleiste zeigt die Weltuhr im 24h-Format (Stunden:Minuten, `WorldClock`) sowie das
+  laufende Spieldatum (`WorldDate`). Erreicht die Weltuhr 24:00, springt das Datum auf den
+  nächsten Tag — **Tag und Monat** laufen weiter, das **Jahr bleibt fix und wird nicht
+  angezeigt**. Diese Zeitbasis ist Grundlage für spätere Jahreszeiten sowie für
+  Schiffsbewegungen, Missionen und Aufträge.
 - **Onboarding**: Neue Spieler wählen Fraktion, Starthafen und Kompanienamen
   (`needsOnboarding` aus `gameState`, danach `createPlayer`).
 

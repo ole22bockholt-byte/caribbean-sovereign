@@ -3,6 +3,7 @@ import { Coins, TrendingUp, Ship, CalendarDays, Timer } from "lucide-react";
 import { factionFlag } from "@/lib/gameData";
 import { formatGold } from "@/lib/format";
 import WorldClock from "./WorldClock";
+import WorldDate from "./WorldDate";
 
 function Stat({ icon: Icon, label, value, accent }) {
   return (
@@ -14,12 +15,6 @@ function Stat({ icon: Icon, label, value, accent }) {
       </div>
     </div>
   );
-}
-
-function formatGameDate(iso) {
-  if (!iso) return "—";
-  const d = new Date(iso + "T00:00:00");
-  return d.toLocaleDateString("de-DE", { day: "numeric", month: "long", year: "numeric" });
 }
 
 export default function StatusBar({ player, world, factionByCode }) {
@@ -52,7 +47,7 @@ export default function StatusBar({ player, world, factionByCode }) {
         <CalendarDays className="w-4 h-4 text-ink-dim" strokeWidth={1.6} />
         <div className="leading-tight">
           <div className="text-[9px] uppercase tracking-[0.16em] text-ink-dim font-body-game">Spieldatum</div>
-          <div className="text-sm font-display text-ink">{formatGameDate(world?.game_date)}</div>
+          <WorldDate gameDate={world?.game_date} lastTickAt={world?.last_tick_at} className="text-sm font-display text-ink" />
         </div>
       </div>
 
