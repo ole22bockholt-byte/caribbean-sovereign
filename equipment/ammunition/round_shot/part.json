@@ -1,0 +1,10 @@
+{
+  "id": "round_shot",
+  "slot": "ammunition",
+  "name": "Vollkugel",
+  "class": "F-Standard",
+  "summary": "Standardmunition gegen Rumpf.",
+  "stats": {
+    "Ziel": "Rumpf"
+  }
+}
