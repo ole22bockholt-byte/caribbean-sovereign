@@ -11,15 +11,40 @@
     "minCrew": 25
   },
   "slots": {
-    "hull_material": 1,
-    "main_battery": 6,
-    "deck_gun": 2,
-    "ammunition": 2
-  },
-  "loadout": {
-    "hull_material": "oak",
-    "main_battery": "12pdr",
-    "deck_gun": "swivel",
-    "ammunition": "round_shot"
+    "hull_material": {
+      "count": 1,
+      "default": "oak",
+      "allowedClasses": [
+        "F",
+        "E",
+        "D"
+      ]
+    },
+    "main_battery": {
+      "count": 6,
+      "default": "12pdr",
+      "allowedClasses": [
+        "F",
+        "E",
+        "D"
+      ]
+    },
+    "deck_gun": {
+      "count": 2,
+      "default": "swivel",
+      "allowedClasses": [
+        "F",
+        "E"
+      ]
+    },
+    "ammunition": {
+      "count": 2,
+      "default": "round_shot",
+      "allowedClasses": [
+        "F",
+        "E",
+        "D"
+      ]
+    }
   }
 }
