@@ -2,9 +2,7 @@ import React from "react";
 import { Coins, TrendingUp, Ship, CalendarDays, Timer } from "lucide-react";
 import { factionFlag } from "@/lib/gameData";
 import { formatGold } from "@/lib/format";
-import Countdown from "./Countdown";
-
-const TICK_INTERVAL_SECONDS = 1800; // Welt-Tick alle 30 Minuten (siehe Automation)
+import WorldClock from "./WorldClock";
 
 function Stat({ icon: Icon, label, value, accent }) {
   return (
@@ -61,8 +59,8 @@ export default function StatusBar({ player, world, factionByCode }) {
       <div className="flex items-center gap-2.5 px-4 py-2 bg-wood">
         <Timer className="w-4 h-4 text-brass pulse-dot" strokeWidth={1.6} />
         <div className="leading-tight">
-          <div className="text-[9px] uppercase tracking-[0.16em] text-ink-dim font-body-game">Welt-Tick</div>
-          <Countdown seconds={TICK_INTERVAL_SECONDS} loop className="text-sm" />
+          <div className="text-[9px] uppercase tracking-[0.16em] text-ink-dim font-body-game">Weltzeit</div>
+          <WorldClock lastTickAt={world?.last_tick_at} className="text-sm" />
         </div>
       </div>
     </header>
