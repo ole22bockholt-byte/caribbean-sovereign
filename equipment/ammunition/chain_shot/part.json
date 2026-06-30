@@ -2,7 +2,7 @@
   "id": "chain_shot",
   "slot": "ammunition",
   "name": "Kettenkugel",
-  "class": "E-Mittelleicht",
+  "class": "Mittelleicht-E",
   "summary": "Zerstört Takelage und Segel.",
   "stats": {
     "Ziel": "Takelage"
