@@ -1,0 +1,13 @@
+{
+  "name": "Fregatte",
+  "class": "Mittel",
+  "summary": "Vielseitiges Kriegsschiff — die Arbeitspferde jeder Flotte.",
+  "description": "Die Fregatte verbindet solide Feuerkraft mit guter Manövrierfähigkeit. Sie eskortiert Konvois, jagt Piraten und hält im Gefecht ihren Mann. Das ausgewogenste Schiff seiner Klasse.",
+  "stats": {
+    "Feuerkraft": 28,
+    "Rumpf": 120,
+    "Crew": 200,
+    "Geschwindigkeit": 6,
+    "Laderaum": 80
+  }
+}
