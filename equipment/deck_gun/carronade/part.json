@@ -2,7 +2,7 @@
   "id": "carronade",
   "slot": "deck_gun",
   "name": "Karronade",
-  "class": "D-Schwer",
+  "class": "Schwer-D",
   "summary": "Kurze Reichweite, verheerend auf Distanz.",
   "stats": {
     "Schaden": 16,
