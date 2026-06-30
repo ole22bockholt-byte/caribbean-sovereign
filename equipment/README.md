@@ -21,16 +21,17 @@ Neue Kategorie = neuer Ordner mit `slot.json`.
 | `id`      | string | ja      | Eindeutige ID (= Ordnername, z. B. `18pdr`).                    |
 | `slot`    | string | ja      | Slot-Kategorie (`main_battery` …).                             |
 | `name`    | string | ja      | Anzeigename.                                                    |
-| `class`   | string | ja      | Klassen-Tag `<Stufe>-<Schweregrad>` (z. B. `C-Schwer`).         |
+| `class`   | string | ja      | Klassen-Tag `<Schweregrad>-<Stufe>` (z. B. `Schwer-C`).         |
 | `summary` | string | nein    | Kurzbeschreibung.                                               |
 | `stats`   | object | nein    | Beliebige Werte (generisch angezeigt).                          |
 
 ### Klassen-Tags (manuell vergeben)
 
+**Zuerst der Schweregrad, dann die Stufe.**
+Schweregrade: **Schwer, Mittelschwer, Standard, Mittelleicht, Leicht**.
 Stufen (schwach → stark): **F → E → D → C → B → A → S**.
-Jede Stufe unterteilt in Schweregraden: **Schwer, Mittelschwer, Standard, Mittelleicht, Leicht**.
 
-`class` = `<Stufe>-<Schweregrad>`, z. B. `S-Leicht`, `C-Schwer`, `F-Standard`.
+`class` = `<Schweregrad>-<Stufe>`, z. B. `Leicht-S`, `Schwer-C`, `Standard-F`.
 
 ## Welche Items passen an ein Schiff?
 
@@ -45,7 +46,7 @@ gelistet; `default` markiert das ausgerüstete Standard-Item.
   "id": "18pdr",
   "slot": "main_battery",
   "name": "18-Pfünder",
-  "class": "C-Schwer",
+  "class": "Schwer-C",
   "summary": "Schwerere Geschütze, mehr Durchschlag.",
   "stats": { "Schaden": 18, "Reichweite": "Mittel" }
 }
