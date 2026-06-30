@@ -15,21 +15,25 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Supabase-Secrets fehlen.' }, { status: 500 });
     }
 
-    const supabase = createClient(supabaseUrl, serviceKey, {
-      auth: { persistSession: false },
+    // Rohe REST-Diagnose: zeigt exakt, welche URL angesprochen wird und was zurückkommt.
+    const cleanUrl = supabaseUrl.replace(/\/+$/, '');
+    const restUrl = `${cleanUrl}/rest/v1/world_state?select=game_date,tick_number,last_tick_at`;
+    const raw = await fetch(restUrl, {
+      headers: { apikey: serviceKey, Authorization: `Bearer ${serviceKey}` },
     });
+    const rawText = await raw.text();
 
-    const { data, error } = await supabase
-      .from('world_state')
-      .select('game_date, tick_number, last_tick_at')
-      .eq('id', true)
-      .single();
-
-    if (error) {
-      return Response.json({ connected: false, error: error.message }, { status: 200 });
+    if (!raw.ok) {
+      return Response.json({
+        connected: false,
+        status: raw.status,
+        urlUsed: cleanUrl,
+        restUrl,
+        body: rawText,
+      }, { status: 200 });
     }
 
-    return Response.json({ connected: true, world: data });
+    return Response.json({ connected: true, world: JSON.parse(rawText) });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
   }
