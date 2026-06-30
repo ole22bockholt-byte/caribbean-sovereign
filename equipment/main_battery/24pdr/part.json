@@ -2,7 +2,7 @@
   "id": "24pdr",
   "slot": "main_battery",
   "name": "24-Pfünder",
-  "class": "B-Schwer",
+  "class": "Schwer-B",
   "summary": "Schwere Batterie für Linienschiffe.",
   "stats": {
     "Schaden": 24,
