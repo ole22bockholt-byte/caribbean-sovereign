@@ -1,0 +1,13 @@
+{
+  "name": "Schaluppe",
+  "class": "Leicht",
+  "summary": "Wendiges Aufklärungsschiff für schnelle Routen und Späherdienste.",
+  "description": "Die Schaluppe ist klein, schnell und günstig im Unterhalt. Ideal für Aufklärung, Kurierfahrten und das Abfangen langsamer Handelsschiffe. Wenig Feuerkraft, dafür kaum zu fassen.",
+  "stats": {
+    "Feuerkraft": 6,
+    "Rumpf": 40,
+    "Crew": 25,
+    "Geschwindigkeit": 9,
+    "Laderaum": 30
+  }
+}
