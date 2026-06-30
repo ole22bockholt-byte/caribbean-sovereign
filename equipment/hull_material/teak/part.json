@@ -2,7 +2,7 @@
   "id": "teak",
   "slot": "hull_material",
   "name": "Teakrumpf",
-  "class": "C-Schwer",
+  "class": "Schwer-C",
   "summary": "Widerstandsfähiger gegen Fäulnis und Beschuss.",
   "stats": {
     "Rumpf": "+15%",
