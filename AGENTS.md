@@ -6,6 +6,63 @@ This is a Base44 app repository. Treat it as user-owned application code, keep c
 
 Start with `README.md` for local setup, environment variables, and publish workflow.
 
+## App-Kern: „Karibik 1765" (PERSISTENTE KI-ANWEISUNG)
+
+Diese Beschreibung definiert den dauerhaften Kern der App. Sie ist bei jeder Aufgabe
+einzuhalten; neue Features dürfen den Kern erweitern, aber nicht widersprechen.
+
+### Was die App ist
+„Karibik 1765" ist ein browserbasiertes, nautisches Handels- und Strategiespiel im
+Setting der Karibik um 1765. Der Spieler führt eine eigene Handelskompanie: Schiffe,
+Handel zwischen Häfen, Fraktionspolitik und Aufträge. Das Spiel ist ein persistentes
+Mehrspieler-Weltsystem — eine gemeinsame Welt entwickelt sich über die Zeit weiter.
+
+### Sprache & Ton
+- Die gesamte Spiel-UI ist auf **Deutsch**. Alle sichtbaren Texte, Labels und Meldungen
+  auf Deutsch halten.
+- Visueller Stil: nautisches „Parchment & Brass" Design (siehe Design-Tokens in
+  `src/index.css`: Holz-/Messing-/Pergamenttöne, Schriften Cinzel / Cormorant Garamond /
+  EB Garamond). Neue UI muss zu diesem Stil passen — keine generischen weißen Cards.
+  Token-Klassen verwenden (`bg-wood`, `text-brass`, `panel`, `font-display` …), keine
+  hartkodierten Farben/Fonts.
+
+### Architektur (Quelle der Wahrheit)
+- **Frontend**: React + Tailwind + shadcn/ui. Hauptseite `src/pages/Game.jsx` (Route `/`),
+  geschützt über `ProtectedRoute`. Spielmodule liegen in `src/components/game/`.
+- **Spielzustand**: zentral über den Hook `src/hooks/useGameState.js`, der die Backend-
+  Funktion `gameState` aufruft und die Antwort mit `transformGameState` (`src/lib/gameData.js`)
+  in das Frontend-Modell wandelt. UI-Komponenten immer aus diesem Hook speisen — keine
+  Mock-Daten in produktiven Pfaden.
+- **Backend**: Base44-Functions in `base44/functions/` (Deno). Bestehende Funktionen:
+  `gameState` (kompletter Spielzustand), `createPlayer` (Onboarding), `seedWorld`
+  (Welt initialisieren, admin-only), `tickWorld` (Welt-Tick, admin-only), `worldState`.
+  Bestehende Funktionen wiederverwenden statt duplizieren.
+- **Datenbank**: Supabase (Migrationen in `supabase/migrations/`). Zentrale Tabellen:
+  `world_state`, `factions`, `goods`, `ports`, `port_faction_influence`, `market_prices`,
+  `actors`, `ships`, `player_meta`. Zugriff aus Functions per Service-Role-Key
+  (Secrets: `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_ANON_KEY`).
+
+### Kern-Spielkonzepte
+- **Fraktionen**: Großbritannien (gb), Spanien (es), Frankreich (fr), Niederlande (nl),
+  Piraten (pirate), Neutral (neutral). Jede mit Code, Name, Farbe, Flagge.
+- **Häfen**: Position (x/y auf der Karte), kontrollierende Fraktion, Sicherheit,
+  Fraktionseinfluss, lokale Marktpreise.
+- **Markt**: Waren mit Kauf-/Verkaufspreisen und Trend je Hafen.
+- **Spieler/Akteur**: Kompaniename, Gold, Einfluss, Fraktion, eigene Schiffe.
+- **Schiffe**: Klassen Schaluppe/Brigg/Fregatte/Galeone; Zustände Im Hafen/Unterwegs/
+  Im Gefecht/Versenkt/Gekapert; Feuerkraft, Rumpf, Crew.
+- **Welt-Zeit**: Die Welt schreitet über Ticks voran (`world_state.tick_number`,
+  `game_date`, `last_tick_at`). Die Statusleiste zeigt daraus eine laufende Weltzeit.
+- **Onboarding**: Neue Spieler wählen Fraktion, Starthafen und Kompanienamen
+  (`needsOnboarding` aus `gameState`, danach `createPlayer`).
+
+### Arbeitsregeln für dieses Spiel
+- Datenmodell-Änderungen immer als Supabase-Migration in `supabase/migrations/` und
+  passend in den Functions abbilden; bestehende Daten nicht brechen.
+- Geschäftslogik nicht bei reinen UI-Änderungen anfassen und umgekehrt.
+- Admin-Operationen (seed/tick) bleiben admin-only (`user.role === 'admin'`).
+- Kleine, fokussierte Komponenten je Spielmodul; deutschsprachige Kommentare beibehalten.
+
 ## Base44 References
 
 - CLI overview: https://docs.base44.com/developers/references/cli/get-started/overview.md
