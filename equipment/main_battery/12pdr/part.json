@@ -1,0 +1,11 @@
+{
+  "id": "12pdr",
+  "slot": "main_battery",
+  "name": "12-Pfünder",
+  "class": "E-Mittelschwer",
+  "summary": "Standardkanone der Linie.",
+  "stats": {
+    "Schaden": 12,
+    "Reichweite": "Mittel"
+  }
+}
