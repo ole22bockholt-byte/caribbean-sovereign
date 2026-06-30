@@ -1,0 +1,11 @@
+{
+  "id": "swivel",
+  "slot": "deck_gun",
+  "name": "Drehbasse",
+  "class": "F-Leicht",
+  "summary": "Leichtes Geschütz gegen Mannschaft.",
+  "stats": {
+    "Schaden": 4,
+    "Feuerrate": "Hoch"
+  }
+}
