@@ -13,7 +13,7 @@
   },
   "slots": {
     "hull_material": 1,
-    "main_battery": 28,
+    "main_battery": 32,
     "deck_gun": 8,
     "ammunition": 3
   }
