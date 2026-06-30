@@ -76,11 +76,20 @@ Mehrspieler-Weltsystem — eine gemeinsame Welt entwickelt sich über die Zeit w
   von Karte/Hafendetails. Vorerst werden alle **Schiffstypen** als Karten-Übersicht
   (`ShipCard`) gelistet; Klick öffnet die Detailseite (`ShipDetail`, ganze Page pro Schiff).
   Die Daten kommen über den **GitHub-Connector (SHARED)** aus der Backend-Funktion
-  `wikiShips`, die eine JSON-Datei aus einem Repo liest (zentrale Konfiguration `REPO`/
-  `BRANCH`/`SHIPS_PATH` oben in `base44/functions/wikiShips/entry.ts`). **Erweiterbar**:
-  `ShipDetail` rendert Felder generisch (`stats`-Objekt, `imageUrl`, `summary`,
-  `description`), sodass eigene Stats/Assets später ohne Code-Änderung erscheinen; das Wiki
-  ist als eigener Bereich angelegt, um weitere Kategorien (Waren, Fraktionen …) zu ergänzen.
+  `wikiShips` (zentrale Konfiguration `REPO`/`BRANCH`/`SHIPS_DIR` oben in
+  `base44/functions/wikiShips/entry.ts`).
+- **Schiff anlegen (pro Schiff ein Ordner)**: Jedes Schiff ist ein **eigener Unterordner**
+  unter `SHIPS_DIR` (Standard `ships/`) im Repo. Ein neues Schiff = neuer Ordner mit:
+  `ship.json` (Pflicht: `name`; optional `class`, `summary`, `description` und das freie
+  `stats`-Objekt mit beliebigen Werten für spätere Spielmechanik), `image.png` (grafische
+  Darstellung) und `preview.mp4` (Vorschauvideo, auch `.webm`/`.mov`). `wikiShips` listet
+  alle Schiff-Ordner auf, liest je `ship.json` und setzt `imageUrl`/`videoUrl` als
+  Raw-GitHub-URLs zusammen.
+- **Detailseite**: `ShipDetail` zeigt das **Vorschauvideo als Hintergrund** im Hero-Bereich
+  oben (Fallback: PNG, dann Platzhalter), darunter die PNG-Grafik (falls Video läuft), die
+  `stats` als Werte-Raster und die Texte. **Erweiterbar**: `stats` wird generisch gerendert —
+  neue Werte erscheinen ohne Code-Änderung; das Wiki ist als eigener Bereich angelegt, um
+  weitere Kategorien (Waren, Fraktionen …) zu ergänzen.
 
 ### Arbeitsregeln für dieses Spiel
 - Datenmodell-Änderungen immer als Supabase-Migration in `supabase/migrations/` und
