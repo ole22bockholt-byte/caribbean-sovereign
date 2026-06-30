@@ -1,0 +1,11 @@
+{
+  "id": "oak",
+  "slot": "hull_material",
+  "name": "Eichenrumpf",
+  "class": "F-Standard",
+  "summary": "Robustes Standardholz, gut verfügbar.",
+  "stats": {
+    "Rumpf": "+0%",
+    "Gewicht": "Mittel"
+  }
+}
