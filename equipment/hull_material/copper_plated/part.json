@@ -2,7 +2,7 @@
   "id": "copper_plated",
   "slot": "hull_material",
   "name": "Kupferbeplankung",
-  "class": "B-Leicht",
+  "class": "Leicht-B",
   "summary": "Schützt vor Bewuchs, erhöht Geschwindigkeit.",
   "stats": {
     "Geschwindigkeit": "+1",
