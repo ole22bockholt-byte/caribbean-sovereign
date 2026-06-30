@@ -7,6 +7,7 @@ import StatusBar from "@/components/game/StatusBar";
 import CaribbeanMap from "@/components/game/CaribbeanMap";
 import PortDetailPanel from "@/components/game/PortDetailPanel";
 import BottomPanels from "@/components/game/BottomPanels";
+import ProfilePanel from "@/components/game/ProfilePanel";
 import QuickActions from "@/components/game/QuickActions";
 import Onboarding from "@/components/game/Onboarding";
 import TradeModal from "@/components/game/modals/TradeModal";
@@ -77,21 +78,29 @@ export default function Game() {
           <StatusBar player={data.player} world={data.world} factionByCode={data.factionByCode} />
 
           <div className="flex-1 flex gap-3 p-3 min-h-0">
-            <div className="flex-1 min-w-0">
-              <CaribbeanMap
-                ports={ports}
-                factionByCode={data.factionByCode}
-                selectedPortId={selectedPort?.id}
-                onSelectPort={setSelectedPortId}
-              />
-            </div>
-            <div className="w-[340px] shrink-0">
-              <PortDetailPanel
-                port={selectedPort}
-                factionByCode={data.factionByCode}
-                onTravel={(p) => toast({ title: "Kurs gesetzt", description: `Reisen nach ${p.name} folgen im nächsten Schritt.` })}
-              />
-            </div>
+            {active === "profil" ? (
+              <div className="flex-1 min-w-0 overflow-y-auto thin-scroll">
+                <ProfilePanel player={data.player} factionByCode={data.factionByCode} />
+              </div>
+            ) : (
+              <>
+                <div className="flex-1 min-w-0">
+                  <CaribbeanMap
+                    ports={ports}
+                    factionByCode={data.factionByCode}
+                    selectedPortId={selectedPort?.id}
+                    onSelectPort={setSelectedPortId}
+                  />
+                </div>
+                <div className="w-[340px] shrink-0">
+                  <PortDetailPanel
+                    port={selectedPort}
+                    factionByCode={data.factionByCode}
+                    onTravel={(p) => toast({ title: "Kurs gesetzt", description: `Reisen nach ${p.name} folgen im nächsten Schritt.` })}
+                  />
+                </div>
+              </>
+            )}
           </div>
 
           <div className="px-3 pb-2 flex items-center justify-between gap-3">

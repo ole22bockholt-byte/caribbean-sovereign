@@ -1,7 +1,7 @@
 import React from "react";
 import {
   LayoutDashboard, Map, ScrollText, Coins, Ship, Anchor, Home,
-  Flag, Handshake, Store, Warehouse, Users, FileText,
+  Flag, Handshake, Store, Warehouse, Users, FileText, User,
 } from "lucide-react";
 
 const NAV = [
@@ -18,6 +18,7 @@ const NAV = [
   { id: "lager", label: "Lager", icon: Warehouse },
   { id: "charaktere", label: "Charaktere", icon: Users },
   { id: "berichte", label: "Berichte", icon: FileText },
+  { id: "profil", label: "Profil", icon: User },
 ];
 
 export default function Sidebar({ active, onSelect }) {

@@ -61,6 +61,10 @@ Mehrspieler-Weltsystem — eine gemeinsame Welt entwickelt sich über die Zeit w
   Schiffsbewegungen, Missionen und Aufträge.
 - **Onboarding**: Neue Spieler wählen Fraktion, Starthafen und Kompanienamen
   (`needsOnboarding` aus `gameState`, danach `createPlayer`).
+- **Profil**: Sidebar-Reiter `profil` zeigt das `ProfilePanel` (`src/components/game/
+  ProfilePanel.jsx`) anstelle von Karte/Hafendetails. Es bündelt Spieler-/Kontodaten
+  (Name, E-Mail aus `useAuth`, Kompanie, Großfraktion) und die Abmeldung über
+  `logout()` aus dem `AuthContext`.
 
 ### Arbeitsregeln für dieses Spiel
 - Datenmodell-Änderungen immer als Supabase-Migration in `supabase/migrations/` und
