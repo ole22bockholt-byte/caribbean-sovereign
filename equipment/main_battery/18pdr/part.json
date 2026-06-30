@@ -1,0 +1,11 @@
+{
+  "id": "18pdr",
+  "slot": "main_battery",
+  "name": "18-Pfünder",
+  "class": "C-Schwer",
+  "summary": "Schwerere Geschütze, mehr Durchschlag.",
+  "stats": {
+    "Schaden": 18,
+    "Reichweite": "Mittel"
+  }
+}
