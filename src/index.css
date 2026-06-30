@@ -1,6 +1,71 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ===== Karibik 1765 — Nautical Design System ===== */
+:root {
+  --ink: #e9dcc0;            /* parchment text */
+  --ink-dim: #b6a888;        /* muted parchment */
+  --brass: #caa65a;          /* brass accent */
+  --brass-bright: #e7c878;
+  --wood-deep: #120d09;      /* darkest wood */
+  --wood: #1c140d;           /* panel wood */
+  --wood-light: #2a1f15;     /* raised wood */
+  --line: #3a2c1c;           /* hairline border */
+  --blood: #9b1c2e;          /* danger / enemy */
+  --sea: #0c1820;            /* deep sea */
+}
+
+.font-display { font-family: 'Cinzel', serif; }
+.font-serif-game { font-family: 'Cormorant Garamond', serif; }
+.font-body-game { font-family: 'EB Garamond', serif; }
+
+.bg-wood-deep { background-color: var(--wood-deep); }
+.bg-wood { background-color: var(--wood); }
+.bg-wood-light { background-color: var(--wood-light); }
+.text-ink { color: var(--ink); }
+.text-ink-dim { color: var(--ink-dim); }
+.text-brass { color: var(--brass); }
+.text-brass-bright { color: var(--brass-bright); }
+.border-line { border-color: var(--line); }
+.border-brass { border-color: var(--brass); }
+
+/* Brass-ruled panel with subtle inner glow */
+.panel {
+  background-color: var(--wood);
+  border: 1px solid var(--line);
+  box-shadow: inset 0 1px 0 rgba(202,166,90,0.08), 0 8px 24px rgba(0,0,0,0.5);
+}
+.panel-header {
+  border-bottom: 1px solid var(--line);
+  background: linear-gradient(180deg, rgba(202,166,90,0.06), transparent);
+}
+
+/* Brass double rule used under section titles */
+.brass-rule {
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--brass), transparent);
+  opacity: 0.55;
+}
+
+/* Pulsing dot for live timers / pirate activity */
+@keyframes nauticalPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.45; transform: scale(0.82); }
+}
+.pulse-dot { animation: nauticalPulse 2s ease-in-out infinite; }
+
+/* Subtle scrollbar */
+.thin-scroll::-webkit-scrollbar { width: 8px; height: 8px; }
+.thin-scroll::-webkit-scrollbar-track { background: transparent; }
+.thin-scroll::-webkit-scrollbar-thumb { background: var(--line); border-radius: 4px; }
+.thin-scroll::-webkit-scrollbar-thumb:hover { background: var(--brass); }
+
+.port-pin { transition: transform 0.18s ease, filter 0.18s ease; cursor: pointer; }
+.port-pin:hover { transform: scale(1.18); filter: drop-shadow(0 0 6px var(--brass)); }
+.port-pin.selected { filter: drop-shadow(0 0 10px var(--brass-bright)); }
 
 @layer base {
   :root {
