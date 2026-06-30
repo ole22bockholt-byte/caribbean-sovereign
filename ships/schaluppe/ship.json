@@ -15,5 +15,11 @@
     "main_battery": 6,
     "deck_gun": 2,
     "ammunition": 2
+  },
+  "loadout": {
+    "hull_material": "oak",
+    "main_battery": "12pdr",
+    "deck_gun": "swivel",
+    "ammunition": "round_shot"
   }
 }
