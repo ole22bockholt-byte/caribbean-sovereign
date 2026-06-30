@@ -65,6 +65,13 @@ Mehrspieler-Weltsystem — eine gemeinsame Welt entwickelt sich über die Zeit w
   ProfilePanel.jsx`) anstelle von Karte/Hafendetails. Es bündelt Spieler-/Kontodaten
   (Name, E-Mail aus `useAuth`, Kompanie, Großfraktion) und die Abmeldung über
   `logout()` aus dem `AuthContext`.
+- **Startbildschirm**: `StartScreen` (`src/components/game/StartScreen.jsx`) ist das
+  Loader-Gate vor der App. Solange `gameState` lädt, zeigt es einen Ladespinner; erst nach
+  vollständigem Laden erscheint „Press any button to start“. Eine beliebige Tasten-/
+  Touch-/Klick-Eingabe startet die Fade-Out-Animation und gibt die App frei (`started`-State
+  in `Game.jsx`). Der Hintergrund ist ein **auswechselbarer Platzhalter** (Konstante
+  `START_BG`, später auch GIF/Video möglich); ein Upload/Auto-Tausch ist bewusst noch nicht
+  implementiert.
 
 ### Arbeitsregeln für dieses Spiel
 - Datenmodell-Änderungen immer als Supabase-Migration in `supabase/migrations/` und

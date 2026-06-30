@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react";
-import { Loader2, AlertTriangle } from "lucide-react";
+import { AlertTriangle } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import Sidebar from "@/components/game/Sidebar";
@@ -8,6 +8,7 @@ import CaribbeanMap from "@/components/game/CaribbeanMap";
 import PortDetailPanel from "@/components/game/PortDetailPanel";
 import BottomPanels from "@/components/game/BottomPanels";
 import ProfilePanel from "@/components/game/ProfilePanel";
+import StartScreen from "@/components/game/StartScreen";
 import QuickActions from "@/components/game/QuickActions";
 import Onboarding from "@/components/game/Onboarding";
 import TradeModal from "@/components/game/modals/TradeModal";
@@ -22,6 +23,7 @@ export default function Game() {
   const [active, setActive] = useState("uebersicht");
   const [selectedPortId, setSelectedPortId] = useState(null);
   const [modal, setModal] = useState(null);
+  const [started, setStarted] = useState(false);
 
   const ports = data?.ports || [];
   const selectedPort = ports.find((p) => p.id === selectedPortId) || ports[0] || null;
@@ -40,12 +42,8 @@ export default function Game() {
     else if (id === "market") setActive("markt");
   };
 
-  if (loading) {
-    return (
-      <div className="fixed inset-0 flex items-center justify-center bg-wood-deep">
-        <Loader2 className="w-8 h-8 text-brass animate-spin" />
-      </div>
-    );
+  if (!started) {
+    return <StartScreen ready={!loading && !error} onStart={() => setStarted(true)} />;
   }
 
   if (error) {
