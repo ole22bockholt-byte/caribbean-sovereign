@@ -2,7 +2,7 @@
   "id": "grape_shot",
   "slot": "ammunition",
   "name": "Kartätsche",
-  "class": "E-Leicht",
+  "class": "Leicht-E",
   "summary": "Streumunition gegen die Crew.",
   "stats": {
     "Ziel": "Crew"
