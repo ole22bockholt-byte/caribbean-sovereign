@@ -1,14 +1,15 @@
 {
-  "name": "Fregatte",
-  "class": "Mittel",
+  "name": "Resolute",
+  "class": "Fregatte, 5th Rate",
+  "role": "Eskortschiff",
   "summary": "Vielseitiges Kriegsschiff — die Arbeitspferde jeder Flotte.",
   "description": "Die Fregatte verbindet solide Feuerkraft mit guter Manövrierfähigkeit. Sie eskortiert Konvois, jagt Piraten und hält im Gefecht ihren Mann. Das ausgewogenste Schiff seiner Klasse.",
   "baseStats": {
-    "hull": 120,
-    "cargo": 80,
-    "speed": 6,
-    "berths": 220,
-    "minCrew": 200
+    "hull": 20000,
+    "cargo": 110,
+    "speed": 7,
+    "berths": 210,
+    "minCrew": 80
   },
   "slots": {
     "hull_material": 1,
