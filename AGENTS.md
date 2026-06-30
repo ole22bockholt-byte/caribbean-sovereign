@@ -72,6 +72,15 @@ Mehrspieler-Weltsystem — eine gemeinsame Welt entwickelt sich über die Zeit w
   in `Game.jsx`). Der Hintergrund ist ein **auswechselbarer Platzhalter** (Konstante
   `START_BG`, später auch GIF/Video möglich); ein Upload/Auto-Tausch ist bewusst noch nicht
   implementiert.
+- **Wiki**: Sidebar-Reiter `wiki` zeigt `WikiPanel` (`src/components/game/wiki/`) anstelle
+  von Karte/Hafendetails. Vorerst werden alle **Schiffstypen** als Karten-Übersicht
+  (`ShipCard`) gelistet; Klick öffnet die Detailseite (`ShipDetail`, ganze Page pro Schiff).
+  Die Daten kommen über den **GitHub-Connector (SHARED)** aus der Backend-Funktion
+  `wikiShips`, die eine JSON-Datei aus einem Repo liest (zentrale Konfiguration `REPO`/
+  `BRANCH`/`SHIPS_PATH` oben in `base44/functions/wikiShips/entry.ts`). **Erweiterbar**:
+  `ShipDetail` rendert Felder generisch (`stats`-Objekt, `imageUrl`, `summary`,
+  `description`), sodass eigene Stats/Assets später ohne Code-Änderung erscheinen; das Wiki
+  ist als eigener Bereich angelegt, um weitere Kategorien (Waren, Fraktionen …) zu ergänzen.
 
 ### Arbeitsregeln für dieses Spiel
 - Datenmodell-Änderungen immer als Supabase-Migration in `supabase/migrations/` und

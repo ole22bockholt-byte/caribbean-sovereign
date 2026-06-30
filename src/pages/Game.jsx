@@ -8,6 +8,7 @@ import CaribbeanMap from "@/components/game/CaribbeanMap";
 import PortDetailPanel from "@/components/game/PortDetailPanel";
 import BottomPanels from "@/components/game/BottomPanels";
 import ProfilePanel from "@/components/game/ProfilePanel";
+import WikiPanel from "@/components/game/wiki/WikiPanel";
 import StartScreen from "@/components/game/StartScreen";
 import QuickActions from "@/components/game/QuickActions";
 import Onboarding from "@/components/game/Onboarding";
@@ -79,6 +80,10 @@ export default function Game() {
             {active === "profil" ? (
               <div className="flex-1 min-w-0 overflow-y-auto thin-scroll">
                 <ProfilePanel player={data.player} factionByCode={data.factionByCode} />
+              </div>
+            ) : active === "wiki" ? (
+              <div className="flex-1 min-w-0 overflow-y-auto thin-scroll">
+                <WikiPanel />
               </div>
             ) : (
               <>
