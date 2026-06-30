@@ -14,36 +14,31 @@
     "hull_material": {
       "count": 1,
       "default": "oak",
-      "allowedClasses": [
-        "F",
-        "E",
-        "D"
+      "allowedWeights": [
+        "Leicht",
+        "Standard"
       ]
     },
     "main_battery": {
       "count": 6,
       "default": "12pdr",
-      "allowedClasses": [
-        "F",
-        "E",
-        "D"
+      "allowedWeights": [
+        "Mittelschwer"
       ]
     },
     "deck_gun": {
       "count": 2,
       "default": "swivel",
-      "allowedClasses": [
-        "F",
-        "E"
+      "allowedWeights": [
+        "Leicht"
       ]
     },
     "ammunition": {
       "count": 2,
-      "default": "round_shot",
-      "allowedClasses": [
-        "F",
-        "E",
-        "D"
+      "default": "grape_shot",
+      "allowedWeights": [
+        "Leicht",
+        "Mittelleicht"
       ]
     }
   }
