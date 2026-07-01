@@ -4,7 +4,7 @@
 // Simulation — ohne Base44-Login/Backend. Nur zum visuellen Testen der Karte.
 // Aufruf: http://localhost:5173/mapdev.html
 // =============================================================================
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import ReactDOM from "react-dom/client";
 import "@/index.css";
 import { Toaster } from "@/components/ui/toaster";
@@ -54,7 +54,7 @@ const INITIAL_SHIPS = [
 ];
 
 function Harness() {
-  const [selectedPortId, setSelectedPortId] = useState("bridgetown");
+  const [selectedPortId, setSelectedPortId] = useState("havana");
   const [selectedShipId, setSelectedShipId] = useState("s1");
 
   const portById = useMemo(() => Object.fromEntries(PORTS.map((p) => [p.id, p])), []);
@@ -107,6 +107,18 @@ function Harness() {
     ? { distanceSm: Math.round(planned.length * 22), durationSeconds: Math.round(planned.durationMs / 1000) }
     : null;
 
+  // Demo-Modus (?demo): startet direkt eine kurze Reise, die Land umsegelt —
+  // damit eine Aufnahme die volle Bewegung ab dem Laden zeigt.
+  const demoStarted = useRef(false);
+  useEffect(() => {
+    if (demoStarted.current) return;
+    if (typeof location === "undefined" || !location.search.includes("demo")) return;
+    demoStarted.current = true;
+    setSelectedShipId("s3");
+    setSelectedPortId("santo_domingo");
+    startVoyage({ shipId: "s3", shipName: "Mistral", fromPortId: "cap_francais", toPortId: "santo_domingo" });
+  }, [startVoyage]);
+
   const handleStartVoyage = () => {
     if (!selectedShip || selectedShip.currentPortId === selectedPort.id) return;
     startVoyage({
@@ -152,4 +164,8 @@ function Harness() {
   );
 }
 
-ReactDOM.createRoot(document.getElementById("root")).render(<Harness />);
+// HMR-sicher: Root nur einmal erzeugen, sonst nur neu rendern (verhindert die
+// „createRoot bereits aufgerufen"-Warnung und ein Flackern beim Hot-Reload).
+const el = document.getElementById("root");
+if (!window.__mapdevRoot) window.__mapdevRoot = ReactDOM.createRoot(el);
+window.__mapdevRoot.render(<Harness />);
