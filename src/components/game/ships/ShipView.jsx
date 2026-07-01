@@ -96,8 +96,8 @@ function Overview({ detail }) {
           </div>
           <Progress value={detail.xp} max={detail.xpMax} />
 
-          <div className="flex gap-3 mt-3 flex-1 min-h-[240px]">
-            <div className="picture-ground relative flex-1 rounded-sm border border-line flex items-center justify-center overflow-hidden">
+          <div className="mt-3 flex-1 flex">
+            <div className="picture-ground relative w-full aspect-video rounded-sm border border-line flex items-center justify-center overflow-hidden">
               <Ship className="w-28 h-28 text-[var(--ink-dim)] opacity-40" strokeWidth={1} />
               <span className="absolute top-2 left-2 text-[10px] uppercase tracking-[0.14em] text-ink-dim font-body-game">
                 Schiffsdarstellung · Platzhalter
@@ -108,14 +108,6 @@ function Overview({ detail }) {
               >
                 <Box className="w-3.5 h-3.5" /> 3D-Ansicht
               </button>
-            </div>
-            <div className="w-28 shrink-0 flex flex-col gap-3">
-              {["Vorderansicht", "Heckansicht"].map((lbl) => (
-                <div key={lbl} className="picture-ground rounded-sm border border-line flex-1 flex flex-col items-center justify-center gap-1">
-                  <Ship className="w-8 h-8 text-[var(--ink-dim)] opacity-40" strokeWidth={1} />
-                  <span className="text-[10px] text-ink-dim font-body-game">{lbl}</span>
-                </div>
-              ))}
             </div>
           </div>
         </div>
