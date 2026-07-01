@@ -1,4 +1,5 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
+import { handleOptions, jsonResponse } from "../_shared/cors.ts";
+import { getUser } from "../_shared/supabase.ts";
 
 // =============================================================================
 // wikiShips — lädt die Schiffstypen-Daten für das Wiki aus einem GitHub-Repo.
@@ -12,55 +13,46 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 //       preview.mp4   (optional) -> Vorschauvideo, läuft als Seiten-Hintergrund
 //                                   (auch preview.webm / preview.mov werden erkannt)
 //
-// ship.json Schema (alle Felder außer "name" optional, frei erweiterbar):
-// {
-//   "name": "Schaluppe",
-//   "class": "Leicht",
-//   "summary": "Wendiges Aufklärungsschiff ...",
-//   "description": "Langtext ...",
-//   "stats": { "Feuerkraft": 6, "Rumpf": 40, "Crew": 25, "Geschwindigkeit": 9 },
-//   "imageFile": "image.png",      // optional, Standard: image.png im Ordner
-//   "videoFile": "preview.mp4"     // optional, Standard: erste preview.* im Ordner
-// }
-//
-// ERWEITERBAR: stats ist ein freies Objekt — neue Werte erscheinen automatisch im
-// Frontend. Pro-Schiff-Ordner ermöglichen beliebig viele Schiffe ohne Konflikte.
+// KONFIGURATION über Function-Secrets (optional):
+//   WIKI_REPO        z. B. "ole22bockholt-byte/caribbean-sovereign" (Standard)
+//   WIKI_BRANCH      Standard: "main"
+//   WIKI_SHIPS_DIR   Standard: "ships"
+//   GITHUB_TOKEN     optional; nur für private Repos oder höhere Rate-Limits nötig.
 // =============================================================================
 
-const REPO = "OWNER/REPO";          // <-- HIER dein Repo eintragen, z.B. "captain/karibik-wiki"
-const BRANCH = "main";
-const SHIPS_DIR = "ships";          // Verzeichnis, das die Schiff-Ordner enthält
+const REPO = Deno.env.get("WIKI_REPO") ?? "ole22bockholt-byte/caribbean-sovereign";
+const BRANCH = Deno.env.get("WIKI_BRANCH") ?? "main";
+const SHIPS_DIR = Deno.env.get("WIKI_SHIPS_DIR") ?? "ships";
+const GITHUB_TOKEN = Deno.env.get("GITHUB_TOKEN") ?? "";
 
 const VIDEO_EXTS = ["preview.mp4", "preview.webm", "preview.mov"];
 
-function ghHeaders(accessToken) {
-  return {
-    "Authorization": `Bearer ${accessToken}`,
+// Minimaler Typ für die GitHub-„Contents"-API-Antwort.
+interface GitHubContent {
+  name: string;
+  type: string;
+}
+
+function ghHeaders(): Record<string, string> {
+  const headers: Record<string, string> = {
     "Accept": "application/vnd.github+json",
     "User-Agent": "karibik-1765-wiki",
   };
+  if (GITHUB_TOKEN) headers["Authorization"] = `Bearer ${GITHUB_TOKEN}`;
+  return headers;
 }
 
-function rawUrl(path) {
+function rawUrl(path: string): string {
   return `https://raw.githubusercontent.com/${REPO}/${BRANCH}/${path}`;
 }
 
 Deno.serve(async (req) => {
+  if (req.method === "OPTIONS") return handleOptions();
   try {
-    const base44 = createClientFromRequest(req);
-    const user = await base44.auth.me();
-    if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
+    const user = await getUser(req);
+    if (!user) return jsonResponse({ error: "Unauthorized" }, { status: 401 });
 
-    if (REPO === "OWNER/REPO") {
-      return Response.json({
-        ships: [],
-        configured: false,
-        message: "GitHub-Repository ist noch nicht konfiguriert (REPO in wikiShips/entry.ts).",
-      });
-    }
-
-    const { accessToken } = await base44.asServiceRole.connectors.getConnection("github");
-    const headers = ghHeaders(accessToken);
+    const headers = ghHeaders();
 
     // 1) Schiff-Ordner unter SHIPS_DIR auflisten
     const dirRes = await fetch(
@@ -68,14 +60,14 @@ Deno.serve(async (req) => {
       { headers },
     );
     if (!dirRes.ok) {
-      return Response.json({
+      return jsonResponse({
         ships: [],
         configured: true,
         message: `Verzeichnis "${SHIPS_DIR}" konnte nicht geladen werden (${dirRes.status}). Prüfe Repo/Pfad/Branch.`,
       });
     }
 
-    const entries = await dirRes.json();
+    const entries = await dirRes.json() as GitHubContent[];
     const shipDirs = Array.isArray(entries) ? entries.filter((e) => e.type === "dir") : [];
 
     // 2) Pro Ordner ship.json laden und Asset-URLs zusammensetzen
@@ -89,7 +81,7 @@ Deno.serve(async (req) => {
         { headers },
       );
       if (!filesRes.ok) continue;
-      const files = await filesRes.json();
+      const files = await filesRes.json() as GitHubContent[];
       const fileNames = Array.isArray(files) ? files.map((f) => f.name) : [];
 
       const metaFile = files.find((f) => f.name === "ship.json");
@@ -119,8 +111,8 @@ Deno.serve(async (req) => {
       });
     }
 
-    return Response.json({ ships, configured: true });
+    return jsonResponse({ ships, configured: true });
   } catch (error) {
-    return Response.json({ error: error.message }, { status: 500 });
+    return jsonResponse({ error: (error as Error).message }, { status: 500 });
   }
 });
