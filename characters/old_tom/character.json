@@ -1,0 +1,15 @@
+{
+  "name": "Old Tom",
+  "category": "crew",
+  "rank": "Bootsmann",
+  "factionCode": "neutral",
+  "experience": "Veteran",
+  "rarity": "common",
+  "status": "available",
+  "skills": {
+    "Seemannschaft": 4,
+    "Ausdauer": 4
+  },
+  "uniqueAbilities": [],
+  "summary": "Zäher alter Seebär, der jede Crew zusammenhält."
+}
