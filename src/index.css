@@ -20,6 +20,13 @@
   --blood: #b23a46;          /* Gefahr / Feind / negativ */
   --pos: #5aa06a;            /* positiv (Zuwächse, verbündet) */
   --sea: #0f2732;            /* tiefes Meer (Karte) */
+  --sea-deep: #0a1a22;       /* Tiefsee (Karten-Verlauf außen) */
+  --sea-shallow: #163743;    /* flacheres Wasser (Verlauf innen) */
+  --land: #24323b;           /* Landfläche (Karte) */
+  --land-hi: #2f414c;        /* Land-Lichtseite (Verlauf) */
+  --coast: #6b8a97;          /* Küstenlinie */
+  --shoal: rgba(120,170,182,0.16); /* Flachwasser-Saum um Land */
+  --graticule: rgba(200,162,76,0.08); /* Gitternetz (Seekarte) */
   --nav: #101a20;            /* Navigations-/Statusleisten-Grund */
   --nav-2: #16232b;          /* Navigations-Verlauf hell */
 

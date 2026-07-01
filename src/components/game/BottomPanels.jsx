@@ -1,5 +1,6 @@
 import React from "react";
 import { Ship, Navigation, ScrollText, Mail } from "lucide-react";
+import { formatCountdown } from "@/lib/format";
 
 // Gemeinsame Hülle: Kopf mit Titel/Anzahl, scrollbarer Inhalt, Fußzeile mit Aktion.
 function PanelShell({ title, icon: Icon, count, footer, onFooter, children }) {
@@ -32,10 +33,7 @@ function EmptyRow({ text }) {
 const statusColor = (s) =>
   s === "Unterwegs" ? "text-brass-bright" : s === "Im Gefecht" ? "text-blood" : "text-ink-dim";
 
-export default function BottomPanels({ player, portNameByUuid, onSelect }) {
-  const ships = player?.ships || [];
-  const sailing = ships.filter((s) => s.status === "Unterwegs");
-
+export default function BottomPanels({ ships = [], voyages = [], onSelect }) {
   return (
     <div className="grid grid-cols-4 gap-1 h-full min-h-0">
       {/* Eigene Schiffe */}
@@ -64,7 +62,7 @@ export default function BottomPanels({ player, portNameByUuid, onSelect }) {
                 <tr key={s.id}>
                   <td className="font-serif-game text-[13px]">{s.name}</td>
                   <td className="text-ink-dim">{s.class}</td>
-                  <td className="text-ink-dim">{portNameByUuid?.[s.locationPortUuid] || "Auf See"}</td>
+                  <td className="text-ink-dim">{s.locationName || "Auf See"}</td>
                   <td className={statusColor(s.status)}>{s.status}</td>
                   <td className="text-right">{s.crew}</td>
                 </tr>
@@ -78,11 +76,11 @@ export default function BottomPanels({ player, portNameByUuid, onSelect }) {
       <PanelShell
         title="Laufende Reisen"
         icon={Navigation}
-        count={sailing.length}
+        count={voyages.length}
         footer="Alle Reisen anzeigen"
         onFooter={() => onSelect?.("flotte")}
       >
-        {sailing.length === 0 ? (
+        {voyages.length === 0 ? (
           <EmptyRow text="Keine laufenden Reisen." />
         ) : (
           <table className="data-table">
@@ -95,12 +93,12 @@ export default function BottomPanels({ player, portNameByUuid, onSelect }) {
               </tr>
             </thead>
             <tbody>
-              {sailing.map((s) => (
-                <tr key={s.id}>
-                  <td className="font-serif-game text-[13px]">{s.name}</td>
-                  <td className="text-ink-dim">{portNameByUuid?.[s.locationPortUuid] || "See"}</td>
-                  <td className="text-ink-dim">—</td>
-                  <td className="text-right text-ink-dim">—</td>
+              {voyages.map((v) => (
+                <tr key={v.id}>
+                  <td className="font-serif-game text-[13px]">{v.shipName}</td>
+                  <td className="text-ink-dim">{v.fromName}</td>
+                  <td className="text-ink-dim">{v.toName}</td>
+                  <td className="text-right text-brass-bright">{formatCountdown(v.etaSeconds)}</td>
                 </tr>
               ))}
             </tbody>

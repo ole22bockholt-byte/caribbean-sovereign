@@ -20,6 +20,11 @@ const FLAG_IMG_BY_CODE = {
 };
 
 import { DUMMY_RESOLUTE } from "./shipData";
+import { PORT_CATALOG } from "./mapGeography";
+
+// Hafentyp aus dem Backend-Status ableiten (Fallback, falls nicht im Katalog).
+const typeFromStatus = (status) =>
+  status === "fort" ? "fort" : status === "neutral_zone" ? "neutral" : "harbor";
 
 const TREND_LABEL = (t) => (t > 0 ? "up" : t < 0 ? "down" : "flat");
 
@@ -85,13 +90,18 @@ export function transformGameState(raw) {
       })
       .filter(Boolean);
 
+    // Kartenposition & -typ aus dem Geografie-Katalog übernehmen (Quelle der
+    // Wahrheit für die Darstellung), damit Häfen deckungsgleich zu den Landmassen
+    // liegen — auch bevor das Backend mit den neuen Koordinaten neu geseedet ist.
+    const cat = PORT_CATALOG[p.code];
     return {
       id: p.code,
       uuid: p.id,
       name: p.name,
       controllingFactionCode: ctrl?.code || "neutral",
-      x: Number(p.x),
-      y: Number(p.y),
+      x: cat ? cat.x : Number(p.x),
+      y: cat ? cat.y : Number(p.y),
+      type: cat?.type || typeFromStatus(p.status),
       security: p.security,
       isMajorNeutral: p.status === "neutral_zone",
       factionInfluence: influence,

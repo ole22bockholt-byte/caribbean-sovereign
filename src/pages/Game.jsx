@@ -1,6 +1,8 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { AlertTriangle } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
+import { useVoyages } from "@/hooks/useVoyages";
+import { computeSeaRoute } from "@/lib/seaRoute";
 import { Button } from "@/components/ui/button";
 import Sidebar from "@/components/game/Sidebar";
 import StatusBar from "@/components/game/StatusBar";
@@ -28,6 +30,8 @@ export default function Game() {
   const [modal, setModal] = useState(null);
   const [started, setStarted] = useState(false);
 
+  const [selectedShipId, setSelectedShipId] = useState(null);
+
   const ports = data?.ports || [];
   const selectedPort = ports.find((p) => p.id === selectedPortId) || ports[0] || null;
 
@@ -35,18 +39,98 @@ export default function Game() {
     () => Object.fromEntries(ports.map((p) => [p.uuid, p.name])),
     [ports]
   );
+  const portByUuid = useMemo(
+    () => Object.fromEntries(ports.map((p) => [p.uuid, p])),
+    [ports]
+  );
+  const portById = useMemo(
+    () => Object.fromEntries(ports.map((p) => [p.id, p])),
+    [ports]
+  );
+
+  // Reisen-Simulation (physische Bewegung über die Karte).
+  const { sailing, shipOverrides, startVoyage } = useVoyages(ports);
+
+  // Schiffs-Ansicht: Backend-Schiffe + laufende Reise-Überschreibungen.
+  const ships = useMemo(() => {
+    const raw = data?.player?.ships || [];
+    return raw.map((s) => {
+      const homePortId = portByUuid[s.locationPortUuid]?.id || null;
+      const ov = shipOverrides[s.id];
+      const currentPortId = ov ? ov.currentPortId : homePortId;
+      return {
+        ...s,
+        status: ov ? ov.status : s.status,
+        currentPortId,
+        locationName: currentPortId ? portById[currentPortId]?.name : "Auf See",
+      };
+    });
+  }, [data, portByUuid, portById, shipOverrides]);
+
+  const dockedShips = useMemo(
+    () =>
+      ships
+        .filter((s) => s.status === "Im Hafen" && s.currentPortId)
+        .map((s) => ({
+          id: s.id,
+          name: s.name,
+          class: s.class,
+          currentPortId: s.currentPortId,
+          currentPortName: portById[s.currentPortId]?.name || "See",
+        })),
+    [ships, portById]
+  );
+
+  const shipPortIds = useMemo(
+    () => ships.filter((s) => s.status === "Im Hafen" && s.currentPortId).map((s) => s.currentPortId),
+    [ships]
+  );
+
+  // Ausgewähltes Schiff für die Reiseplanung (fällt auf erstes Schiff im Hafen zurück).
+  useEffect(() => {
+    if (dockedShips.length === 0) return;
+    if (!dockedShips.some((s) => s.id === selectedShipId)) {
+      setSelectedShipId(dockedShips[0].id);
+    }
+  }, [dockedShips, selectedShipId]);
+
+  const selectedShip = dockedShips.find((s) => s.id === selectedShipId) || null;
+
+  // Geplante Route (Vorschau) vom Standort des Schiffs zum gewählten Hafen.
+  const planned = useMemo(() => {
+    if (!selectedShip || !selectedPort || selectedShip.currentPortId === selectedPort.id) return null;
+    const from = portById[selectedShip.currentPortId];
+    if (!from) return null;
+    return computeSeaRoute(from, selectedPort);
+  }, [selectedShip, selectedPort, portById]);
+
+  const routeInfo = planned
+    ? { distanceSm: Math.round(planned.length * 22), durationSeconds: Math.round(planned.durationMs / 1000) }
+    : null;
+
+  const handleStartVoyage = () => {
+    if (!selectedShip || !selectedPort || selectedShip.currentPortId === selectedPort.id) return;
+    startVoyage({
+      shipId: selectedShip.id,
+      shipName: selectedShip.name,
+      fromPortId: selectedShip.currentPortId,
+      toPortId: selectedPort.id,
+    });
+    toast({
+      title: "Segel gesetzt",
+      description: `${selectedShip.name} nimmt Kurs auf ${selectedPort.name}.`,
+    });
+  };
 
   const overview = useMemo(() => {
-    const ships = data?.player?.ships || [];
-    const sailing = ships.filter((s) => s.status === "Unterwegs").length;
     return [
       { label: "Aktive Aufträge", value: 0, to: "auftraege" },
-      { label: "Laufende Reisen", value: sailing, to: "flotte" },
+      { label: "Laufende Reisen", value: sailing.length, to: "flotte" },
       { label: "Bauprojekte", value: 0, to: "siedlung" },
       { label: "Forschung", value: 0 },
       { label: "Ausbildungen", value: 0, to: "charaktere" },
     ];
-  }, [data]);
+  }, [sailing.length]);
 
   const handleQuickAction = (id) => {
     if (id === "trade") setModal("trade");
@@ -119,13 +203,20 @@ export default function Game() {
                       factionByCode={data.factionByCode}
                       selectedPortId={selectedPort?.id}
                       onSelectPort={setSelectedPortId}
+                      sailing={sailing}
+                      plannedRoute={planned}
+                      shipPortIds={shipPortIds}
                     />
                   </div>
                   <div className="w-[340px] shrink-0">
                     <PortDetailPanel
                       port={selectedPort}
                       factionByCode={data.factionByCode}
-                      onTravel={(p) => toast({ title: "Kurs gesetzt", description: `Reisen nach ${p.name} folgen im nächsten Schritt.` })}
+                      dockedShips={dockedShips}
+                      selectedShipId={selectedShipId}
+                      onSelectShip={setSelectedShipId}
+                      routeInfo={routeInfo}
+                      onStartVoyage={handleStartVoyage}
                     />
                   </div>
                 </>
@@ -133,7 +224,7 @@ export default function Game() {
             </div>
 
             <div className="h-[196px] shrink-0 px-1 pb-1">
-              <BottomPanels player={data.player} portNameByUuid={portNameByUuid} onSelect={setActive} />
+              <BottomPanels ships={ships} voyages={sailing} onSelect={setActive} />
             </div>
 
             <div className="shrink-0 px-1 pb-1">
