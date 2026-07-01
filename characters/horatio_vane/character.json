@@ -1,0 +1,28 @@
+{
+  "name": "Horatio Vane",
+  "category": "admiral",
+  "rank": "Admiral",
+  "factionCode": "gb",
+  "experience": "Legende",
+  "rarity": "legendary",
+  "status": "available",
+  "commandLimit": 5,
+  "skills": {
+    "Taktik": 5,
+    "Führung": 5,
+    "Navigation": 4,
+    "Geschütz": 3,
+    "Moral": 5
+  },
+  "uniqueAbilities": [
+    {
+      "name": "Linienbrecher",
+      "description": "Durchbricht feindliche Schlachtlinien und stiftet Chaos in der gegnerischen Formation."
+    },
+    {
+      "name": "Unbeugsamer Wille",
+      "description": "Die Moral aller kommandierten Schiffe bricht im Gefecht nie zusammen."
+    }
+  ],
+  "summary": "Ein gefürchteter Flottenkommandant, der noch nie eine Seeschlacht verloren hat."
+}
