@@ -1,9 +1,12 @@
 import React, { useState } from "react";
 import { Plus, Minus } from "lucide-react";
-import { factionFlag } from "@/lib/gameData";
+import { SEA_LABELS, LANDMASSES } from "@/lib/mapGeography";
+import MapCanvas from "./map/MapCanvas";
+import MapRoutes from "./map/MapRoutes";
+import PortMarker from "./map/PortMarker";
+import ShipToken from "./map/ShipToken";
 import MapLegend from "./MapLegend";
-
-const MAP_BG = "https://media.base44.com/images/public/6a43defde92c0d47de02330a/c5394dcd2_generated_image.png";
+import mapOverlay from "@/assets/map-overlay.png";
 
 const MAP_TABS = [
   { id: "welt", label: "Weltkarte" },
@@ -11,12 +14,25 @@ const MAP_TABS = [
   { id: "ressourcen", label: "Ressourcenkarte" },
 ];
 
-export default function CaribbeanMap({ ports, factionByCode, selectedPortId, onSelectPort }) {
+// Landmassen mit Beschriftung (für die dezenten Insel-Namen).
+const LAND_LABELS = LANDMASSES.filter((m) => m.label);
+
+export default function CaribbeanMap({
+  ports,
+  factionByCode,
+  selectedPortId,
+  onSelectPort,
+  sailing = [],
+  plannedRoute = null,
+  shipPortIds = [],
+}) {
   const [tab, setTab] = useState("welt");
   const [zoom, setZoom] = useState(1);
 
   const zoomIn = () => setZoom((z) => Math.min(1.8, +(z + 0.2).toFixed(2)));
   const zoomOut = () => setZoom((z) => Math.max(0.8, +(z - 0.2).toFixed(2)));
+
+  const shipHereSet = new Set(shipPortIds);
 
   return (
     <div className="panel rounded-sm h-full flex flex-col overflow-hidden">
@@ -34,53 +50,71 @@ export default function CaribbeanMap({ ports, factionByCode, selectedPortId, onS
       </div>
 
       {/* Kartenfläche */}
-      <div className="relative flex-1 overflow-hidden bg-[var(--sea)]">
+      <div className="relative flex-1 overflow-hidden bg-[var(--sea-deep)]">
         <div
           className="absolute inset-0 origin-center transition-transform duration-200"
           style={{ transform: `scale(${zoom})` }}
         >
-          <div
-            className="absolute inset-0 bg-cover bg-center opacity-[0.6]"
-            style={{ backgroundImage: `url(${MAP_BG})` }}
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-[rgba(15,39,50,0.25)] to-[rgba(11,17,22,0.6)]" />
+          {/* Meer + Land + Gitternetz */}
+          <MapCanvas mode={tab} factionByCode={factionByCode} />
 
-          {/* Dekorative Meeresbeschriftung */}
-          <span className="absolute left-[62%] top-[14%] font-serif-game italic text-[var(--ink-dim)] text-lg tracking-[0.35em] opacity-70 select-none pointer-events-none">
-            KARIBISCHES MEER
-          </span>
-          <span className="absolute left-[18%] top-[74%] font-serif-game italic text-[var(--ink-dim)] text-base tracking-[0.35em] opacity-60 select-none pointer-events-none">
-            KARIBISCHES MEER
-          </span>
+          {/* Dekoratives Seekarten-Overlay (antiker Chart-Stil). Der schwarze
+              Bildhintergrund wird per „screen"-Blendmodus transparent, sodass nur
+              die Messing-Gravuren über der Karte liegen. pointer-events: none hält
+              Häfen, Schiffe und Routen voll funktional. */}
+          <img
+            src={mapOverlay}
+            alt=""
+            aria-hidden="true"
+            draggable="false"
+            className="absolute inset-0 w-full h-full pointer-events-none select-none"
+            style={{ mixBlendMode: "screen", opacity: 0.9 }}
+          />
+
+          {/* Seewege (geplant + laufend) */}
+          <MapRoutes sailing={sailing} planned={plannedRoute} />
+
+          {/* Insel-/Meeresbeschriftungen */}
+          {LAND_LABELS.map((m) => (
+            <span
+              key={`ll-${m.id}`}
+              className="absolute -translate-x-1/2 -translate-y-1/2 font-display tracking-[0.25em] text-[var(--ink-dim)] opacity-70 select-none pointer-events-none z-10"
+              style={{ left: `${m.labelAt[0]}%`, top: `${m.labelAt[1]}%`, fontSize: 10 }}
+            >
+              {m.label}
+            </span>
+          ))}
+          {SEA_LABELS.map((s, i) => (
+            <span
+              key={`sl-${i}`}
+              className="absolute -translate-x-1/2 -translate-y-1/2 font-serif-game italic tracking-[0.35em] text-[var(--ink-dim)] opacity-60 select-none pointer-events-none z-10"
+              style={{ left: `${s.x}%`, top: `${s.y}%`, fontSize: s.size }}
+            >
+              {s.text}
+            </span>
+          ))}
 
           {/* Häfen */}
           {(ports || []).map((port) => {
             const f = factionByCode?.[port.controllingFactionCode];
             const color = f?.color || "#8a8a8a";
-            const selected = selectedPortId === port.id;
             return (
-              <button
+              <PortMarker
                 key={port.id}
-                onClick={() => onSelectPort(port.id)}
-                className={`port-pin absolute -translate-x-1/2 -translate-y-1/2 flex flex-col items-center ${selected ? "selected z-20" : "z-10"}`}
-                style={{ left: `${port.x}%`, top: `${port.y}%` }}
-              >
-                <span
-                  className="w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center"
-                  style={{ borderColor: color, backgroundColor: port.isMajorNeutral ? "var(--wood-deep)" : color }}
-                >
-                  {port.isMajorNeutral && <span className="w-1 h-1 rounded-full bg-[var(--brass)]" />}
-                </span>
-                <span
-                  className={`mt-1 px-1.5 py-0.5 rounded-sm text-[10px] font-display whitespace-nowrap leading-none border ${
-                    selected ? "bg-[var(--wood-light)] text-brass-bright border-brass" : "bg-[rgba(11,17,22,0.78)] text-ink border-line"
-                  }`}
-                >
-                  {factionFlag(port.controllingFactionCode)} {port.name}
-                </span>
-              </button>
+                port={port}
+                color={color}
+                selected={selectedPortId === port.id}
+                onSelect={onSelectPort}
+                mode={tab}
+                shipHere={shipHereSet.has(port.id)}
+              />
             );
           })}
+
+          {/* Fahrende Schiffe */}
+          {sailing.map((v) => (
+            <ShipToken key={v.id} ship={v} />
+          ))}
         </div>
 
         {/* Zoom-Steuerung */}
