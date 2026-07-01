@@ -98,7 +98,7 @@ export default function PortDetailPanel({ port, factionByCode, onTravel }) {
       </div>
 
       {/* Tabs */}
-      <div className="game-tabs px-1 border-b border-line">
+      <div className="game-tabs px-1 nav-line-b">
         {TABS.map((t) => (
           <button
             key={t.id}
