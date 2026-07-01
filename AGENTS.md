@@ -193,12 +193,20 @@ hosted infrastructure at `https://app.base44.com`.
   ```
   Without `VITE_BASE44_APP_BASE_URL` the dev server logs `[base44] Proxy not enabled` and all
   `/api` calls (auth, `gameState`, etc.) fail.
-- **Auth gate (important)**: This app is **restricted to Base44 workspace members**. An
-  unauthenticated visitor to `localhost:5173` is redirected to Base44's hosted SSO login at
-  `app.base44.com/login` (Google/Apple/GitHub/email). The custom `/login` page in `src/pages`
-  is effectively bypassed by this redirect. To reach the game UI (onboarding, map, trading)
-  you must be logged in to Base44 as a workspace member — e.g. log in through the Desktop
-  pane; the session then flows back to the local app via `access_token`.
+- **Auth gate (important)**: This app is **restricted to Base44 workspace members**. The
+ backend `public-settings` check returns `403 { reason: auth_required }` for anyone who is
+ not a workspace member — even after a successful SSO login and even with a token present.
+ To reach the game UI (onboarding, map, trading) you must be logged in to Base44 as a
+ **workspace member** (e.g. through the Desktop pane); the session then flows back to the
+ local app via `access_token`.
+- **Login-loop workaround (`src/App.jsx`)**: Previously `AuthenticatedApp` force-redirected
+ on `auth_required` to the hosted SSO (`base44.auth.redirectToLogin`), so a logged-in
+ non-member looped forever (login → back → `auth_required` → login …). Now, on
+ `auth_required`: with a token present it shows the "Access Restricted" page
+ (`UserNotRegisteredError`) instead of redirecting; without a token it renders normally and
+ the `ProtectedRoute` routes to the app's own `/login` page (`src/pages/Login.jsx`, Google +
+ email/password). This only affects the unauthenticated/unauthorized path — valid members
+ never hit `authError` and load the game as before.
 - **Checks**: `npm run lint` is the enforced check (passes clean). `npm run build` works.
   `npm run typecheck` (`tsc`) reports **pre-existing** type errors in the JSX auth pages
   (`Register.jsx`, `ResetPassword.jsx`, etc.) because components are untyped `.jsx`; it is not
