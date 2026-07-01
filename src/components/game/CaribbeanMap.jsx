@@ -5,8 +5,8 @@ import MapCanvas from "./map/MapCanvas";
 import MapRoutes from "./map/MapRoutes";
 import PortMarker from "./map/PortMarker";
 import ShipToken from "./map/ShipToken";
-import CompassRose from "./map/CompassRose";
 import MapLegend from "./MapLegend";
+import mapOverlay from "@/assets/map-overlay.png";
 
 const MAP_TABS = [
   { id: "welt", label: "Weltkarte" },
@@ -58,6 +58,19 @@ export default function CaribbeanMap({
           {/* Meer + Land + Gitternetz */}
           <MapCanvas mode={tab} factionByCode={factionByCode} />
 
+          {/* Dekoratives Seekarten-Overlay (antiker Chart-Stil). Der schwarze
+              Bildhintergrund wird per „screen"-Blendmodus transparent, sodass nur
+              die Messing-Gravuren über der Karte liegen. pointer-events: none hält
+              Häfen, Schiffe und Routen voll funktional. */}
+          <img
+            src={mapOverlay}
+            alt=""
+            aria-hidden="true"
+            draggable="false"
+            className="absolute inset-0 w-full h-full pointer-events-none select-none"
+            style={{ mixBlendMode: "screen", opacity: 0.9 }}
+          />
+
           {/* Seewege (geplant + laufend) */}
           <MapRoutes sailing={sailing} planned={plannedRoute} />
 
@@ -102,11 +115,6 @@ export default function CaribbeanMap({
           {sailing.map((v) => (
             <ShipToken key={v.id} ship={v} />
           ))}
-        </div>
-
-        {/* Kompassrose */}
-        <div className="absolute top-3 left-3 z-30 pointer-events-none opacity-90">
-          <CompassRose />
         </div>
 
         {/* Zoom-Steuerung */}
