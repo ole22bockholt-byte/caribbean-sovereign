@@ -18,8 +18,9 @@ import TradeModal from "@/components/game/modals/TradeModal";
 import BuildShipModal from "@/components/game/modals/BuildShipModal";
 import CreateContractModal from "@/components/game/modals/CreateContractModal";
 import { useGameState } from "@/hooks/useGameState";
+import { asset } from "@/lib/assets";
 
-const PARCHMENT = "https://media.base44.com/images/public/6a43defde92c0d47de02330a/ebfe1567b_generated_image.png";
+const PARCHMENT = asset("assets/parchment.png");
 
 export default function Game() {
   const { data, loading, error, reload } = useGameState();

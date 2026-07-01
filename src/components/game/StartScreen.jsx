@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useCallback } from "react";
+import { asset } from "@/lib/assets";
 
 // Platzhalter-Hintergrund. Später manuell austauschbar (auch GIF/Video möglich) —
-// einfach diese URL ersetzen. Auto-Erkennung/Upload ist bewusst NOCH NICHT implementiert.
-const START_BG = "https://media.base44.com/images/public/6a43defde92c0d47de02330a/592b13c14_generated_image.png";
+// einfach die Datei in public/assets/ ersetzen. Auto-Erkennung/Upload ist bewusst NOCH NICHT implementiert.
+const START_BG = asset("assets/start-bg.png");
 
 // Startbildschirm als Loader-Gate: erscheint erst wenn `ready` true ist (App vollständig
 // geladen). Beim ersten Button-/Touch-Input spielt eine Fade-Out-Animation, danach `onStart`.

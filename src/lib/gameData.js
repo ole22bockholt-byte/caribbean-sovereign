@@ -15,8 +15,10 @@ const FLAG_BY_CODE = {
 
 // Flaggen-Bilder je Fraktion (auswechselbar). Fehlt ein Bild, fällt die UI auf
 // das Emoji aus FLAG_BY_CODE zurück.
+import { asset } from "./assets";
+
 const FLAG_IMG_BY_CODE = {
-  gb: "https://media.base44.com/images/public/6a43defde92c0d47de02330a/78c446dd1_gb_union_jack.webp",
+  gb: asset("assets/flag-gb.webp"),
 };
 
 import { DUMMY_RESOLUTE } from "./shipData";

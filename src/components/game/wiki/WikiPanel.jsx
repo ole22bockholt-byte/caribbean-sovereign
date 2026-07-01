@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Loader2, BookOpen, Github } from "lucide-react";
-import { base44 } from "@/api/base44Client";
+import { invokeFunction } from "@/api/supabaseClient";
 import ShipCard from "./ShipCard";
 import ShipDetail from "./ShipDetail";
 
@@ -16,10 +16,10 @@ export default function WikiPanel() {
     let cancelled = false;
     (async () => {
       try {
-        const res = await base44.functions.invoke("wikiShips", {});
+        const res = await invokeFunction("wikiShips");
         if (cancelled) return;
-        setShips(res.data?.ships || []);
-        if (res.data?.configured === false || res.data?.message) setNotice(res.data.message);
+        setShips(res?.ships || []);
+        if (res?.configured === false || res?.message) setNotice(res.message);
       } catch (e) {
         if (!cancelled) setNotice("Wiki-Daten konnten nicht geladen werden.");
       } finally {

@@ -53,12 +53,16 @@ const AuthenticatedApp = () => {
 };
 
 
+// Basis-Pfad für das Routing. Auf GitHub Pages (Projekt-Seiten) läuft die App unter
+// einem Unterpfad (z. B. /caribbean-sovereign/); Vite liefert ihn über BASE_URL.
+const routerBasename = import.meta.env.BASE_URL.replace(/\/$/, "") || "/";
+
 function App() {
 
   return (
     <AuthProvider>
       <QueryClientProvider client={queryClientInstance}>
-        <Router>
+        <Router basename={routerBasename}>
           <ScrollToTop />
           <AuthenticatedApp />
         </Router>

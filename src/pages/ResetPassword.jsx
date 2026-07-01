@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { supabase } from "@/api/supabaseClient";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -8,13 +8,24 @@ import { Lock, Loader2, AlertTriangle } from "lucide-react";
 import AuthLayout from "@/components/AuthLayout";
 
 export default function ResetPassword() {
-  const [searchParams] = useSearchParams();
-  const resetToken = searchParams.get("token");
+  // Der Recovery-Link aus der E-Mail stellt beim Öffnen eine Session her
+  // (supabase-js liest das Token aus der URL). Ohne diese Session ist der Link ungültig.
+  const [hasRecoverySession, setHasRecoverySession] = useState(null); // null = prüfen
 
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setHasRecoverySession(!!session);
+    });
+    const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "PASSWORD_RECOVERY" || session) setHasRecoverySession(true);
+    });
+    return () => sub?.subscription?.unsubscribe();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -25,8 +36,10 @@ export default function ResetPassword() {
     }
     setLoading(true);
     try {
-      await base44.auth.resetPassword({ resetToken, newPassword });
-      window.location.href = "/login";
+      const { error: updateError } = await supabase.auth.updateUser({ password: newPassword });
+      if (updateError) throw updateError;
+      await supabase.auth.signOut();
+      window.location.href = `${import.meta.env.BASE_URL}login`;
     } catch (err) {
       setError(err.message || "Failed to reset password");
     } finally {
@@ -34,7 +47,7 @@ export default function ResetPassword() {
     }
   };
 
-  if (!resetToken) {
+  if (hasRecoverySession === false) {
     return (
       <AuthLayout
         icon={AlertTriangle}

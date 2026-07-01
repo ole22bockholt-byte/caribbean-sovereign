@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { base44 } from "@/api/base44Client";
+import { invokeFunction } from "@/api/supabaseClient";
 import { transformGameState } from "@/lib/gameData";
 
 // Zentraler Hook: lädt den kompletten Spielzustand und stellt ein reload() bereit.
@@ -12,9 +12,8 @@ export function useGameState() {
     setLoading(true);
     setError(null);
     try {
-      const res = await base44.functions.invoke("gameState", {});
-      if (res.data?.error) throw new Error(res.data.error);
-      setData(transformGameState(res.data));
+      const res = await invokeFunction("gameState");
+      setData(transformGameState(res));
     } catch (e) {
       setError(e.message || "Laden fehlgeschlagen.");
     } finally {

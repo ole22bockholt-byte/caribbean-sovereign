@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import { Plus, Minus } from "lucide-react";
 import { factionFlag } from "@/lib/gameData";
 import MapLegend from "./MapLegend";
+import { asset } from "@/lib/assets";
 
-const MAP_BG = "https://media.base44.com/images/public/6a43defde92c0d47de02330a/c5394dcd2_generated_image.png";
+const MAP_BG = asset("assets/harbor.png");
 
 const MAP_TABS = [
   { id: "welt", label: "Weltkarte" },

@@ -23,12 +23,14 @@
   --nav: #101a20;            /* Navigations-/Statusleisten-Grund */
   --nav-2: #16232b;          /* Navigations-Verlauf hell */
 
-  /* Texturen (auswechselbar, zentral) — weiterhin verfügbar für Bild-Flächen */
-  --tex-outline: url('https://media.base44.com/images/public/6a43defde92c0d47de02330a/434f9e695_outline.png');
-  --tex-background: url('https://media.base44.com/images/public/6a43defde92c0d47de02330a/5b637d69e_background.png');
-  --tex-pictureground: url('/ship-blueprint.png');   /* Hintergrund hinter Schiffsbildern (Datei in public/ ablegen) */
-  --tex-navground: url('https://media.base44.com/images/public/6a43defde92c0d47de02330a/d6d1ed0a6_outliner.png');
-  --tex-navline: url('https://media.base44.com/images/public/6a43defde92c0d47de02330a/edb112d7b_outline.png');
+  /* Texturen (auswechselbar, zentral) — lokal in src/assets/textures/, damit die
+     App ohne externe CDN (media.base44.com) auskommt. Vite bündelt sie und setzt
+     den korrekten Basis-Pfad automatisch. Zum Tauschen die Datei dort ersetzen. */
+  --tex-outline: url('./assets/textures/outline.png');
+  --tex-background: url('./assets/textures/background.png');
+  --tex-pictureground: url('./assets/textures/ship-blueprint.png');   /* Hintergrund hinter Schiffsbildern */
+  --tex-navground: url('./assets/textures/outliner.png');
+  --tex-navline: url('./assets/textures/navline.png');
   --outline-width: 6px;
   --divider-width: 10px;     /* Dicke der Trennlinien (Messing-Textur outline.png) */
 }
