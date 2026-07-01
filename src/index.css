@@ -56,8 +56,10 @@
   background-image: var(--tex-navground);   /* outliner.png als Füll-Textur */
   background-size: cover;
   background-position: center;
-  border: 1px solid var(--line);
-  border-radius: 4px;
+  /* Jede Box mit der Messing-Trennlinien-Textur (outline.png) umrahmen. */
+  border: var(--outline-width) solid var(--line);
+  border-image: var(--tex-outline) 30 round;
+  border-image-width: var(--outline-width);
   box-shadow: inset 0 1px 0 rgba(230,200,120,0.06), 0 6px 18px rgba(0,0,0,0.45);
 }
 /* Panel-Kopf: abgesetzte Leiste mit Messing-Trennlinie (outline.png) darunter. */

@@ -81,9 +81,9 @@ function Progress({ value, max }) {
 
 function Overview({ detail }) {
   return (
-    <div className="space-y-3">
+    <div className="space-y-1">
       {/* Oberer Bereich: Darstellung + Kennwerte */}
-      <div className="flex gap-3 flex-col xl:flex-row">
+      <div className="flex gap-1 flex-col xl:flex-row">
         {/* Schiffsdarstellung */}
         <div className="panel rounded-sm flex-[5] min-w-0 flex flex-col p-3">
           <div className="flex items-center justify-between mb-1">
@@ -121,7 +121,7 @@ function Overview({ detail }) {
         </div>
 
         {/* Kennwert-Panels 2×3 */}
-        <div className="flex-[7] min-w-0 grid grid-cols-1 md:grid-cols-2 gap-3 auto-rows-min">
+        <div className="flex-[7] min-w-0 grid grid-cols-1 md:grid-cols-2 gap-1 auto-rows-min">
           <Panel title="Schiffsdaten" icon={Ship}>
             {detail.dataRows.map((r) => (
               <Row key={r.label} label={r.label} value={r.value} flag={r.flag} accent={r.accent} />
@@ -186,7 +186,7 @@ function Overview({ detail }) {
       </div>
 
       {/* Unterer Bereich: 4 Panels */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-1">
         <Panel
           title={`Laderaum · ${detail.cargo.used} / ${detail.cargo.capacity} t (${Math.round((detail.cargo.used / detail.cargo.capacity) * 100)} %)`}
           icon={Package}
@@ -295,7 +295,7 @@ export default function ShipView({ player, factionByCode, portNameByUuid, onNavi
   }
 
   return (
-    <div className="h-full flex flex-col gap-3 min-h-0">
+    <div className="h-full flex flex-col gap-1 min-h-0">
       {/* Kopf + Tabs */}
       <div className="panel rounded-sm shrink-0">
         <div className="px-4 py-2.5 flex items-center gap-3">
