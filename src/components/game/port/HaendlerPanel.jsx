@@ -186,7 +186,7 @@ export default function HaendlerPanel({ port, factionByCode, economy, shipsAtPor
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <button className="brass-btn w-full py-2 text-sm disabled:opacity-40 disabled:cursor-not-allowed" disabled={!canFit} title={canFit ? "" : "Laderaum voll"} onClick={() => doTrade("buy")}>
+                    <button className="brass-btn w-full py-2 text-sm disabled:opacity-40 disabled:grayscale disabled:cursor-not-allowed" disabled={!canFit} title={canFit ? "" : "Laderaum voll"} onClick={() => doTrade("buy")}>
                       Kaufen & verladen · {formatGold(qty * row.buy)} G
                     </button>
                     <button className="ghost-btn w-full py-2 text-sm disabled:opacity-40 disabled:cursor-not-allowed" disabled={onBoard(row.good) < qty} onClick={() => doTrade("sell")}>

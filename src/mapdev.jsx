@@ -47,7 +47,7 @@ const FACTIONS = {
   neutral: { code: "neutral", name: "Neutral", color: "#8a8a8a" },
 };
 
-const GOODS = ["Rum", "Zucker", "Tabak", "Baumwolle", "Gewürze", "Kaffee"];
+const GOODS = ["Rum", "Zucker", "Tabak", "Baumwolle", "Gewürze", "Kaffee", "Schießpulver", "Bauholz"];
 
 const PORTS = Object.entries(PORT_CATALOG).map(([code, c]) => ({
   id: code,
