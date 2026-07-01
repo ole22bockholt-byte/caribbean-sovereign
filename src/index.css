@@ -26,7 +26,7 @@
   /* Texturen (auswechselbar, zentral) — weiterhin verfügbar für Bild-Flächen */
   --tex-outline: url('https://media.base44.com/images/public/6a43defde92c0d47de02330a/434f9e695_outline.png');
   --tex-background: url('https://media.base44.com/images/public/6a43defde92c0d47de02330a/5b637d69e_background.png');
-  --tex-pictureground: url('https://media.base44.com/images/public/6a43defde92c0d47de02330a/82f85f195_pictureground.png');
+  --tex-pictureground: url('/ship-blueprint.png');   /* Hintergrund hinter Schiffsbildern (Datei in public/ ablegen) */
   --tex-navground: url('https://media.base44.com/images/public/6a43defde92c0d47de02330a/d6d1ed0a6_outliner.png');
   --tex-navline: url('https://media.base44.com/images/public/6a43defde92c0d47de02330a/edb112d7b_outline.png');
   --outline-width: 6px;
