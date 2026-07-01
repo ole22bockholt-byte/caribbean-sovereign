@@ -12,17 +12,19 @@ const ACTIONS = [
 
 export default function QuickActions({ onAction }) {
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-1.5">
       {ACTIONS.map((a) => {
         const Icon = a.icon;
         return (
           <button
             key={a.id}
             onClick={() => onAction(a.id)}
-            className="group flex items-center gap-2 px-3 py-2 rounded-sm bg-wood border border-line hover:border-brass hover:bg-wood-light transition-colors"
+            className="group flex flex-col items-center justify-center gap-1 px-3 py-1.5 rounded-sm hover:bg-[rgba(230,200,120,0.06)] transition-colors min-w-[74px]"
           >
-            <Icon className="w-4 h-4 text-brass group-hover:text-brass-bright" strokeWidth={1.6} />
-            <span className="font-body-game text-[13px] text-ink whitespace-nowrap">{a.label}</span>
+            <Icon className="w-5 h-5 text-brass group-hover:text-brass-bright" strokeWidth={1.5} />
+            <span className="font-body-game text-[11px] text-ink-dim group-hover:text-ink whitespace-nowrap leading-none">
+              {a.label}
+            </span>
           </button>
         );
       })}

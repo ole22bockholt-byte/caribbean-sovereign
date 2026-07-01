@@ -20,26 +20,39 @@ Mehrspieler-Weltsystem — eine gemeinsame Welt entwickelt sich über die Zeit w
 ### Sprache & Ton
 - Die gesamte Spiel-UI ist auf **Deutsch**. Alle sichtbaren Texte, Labels und Meldungen
   auf Deutsch halten.
-- Visueller Stil: nautisches „Parchment & Brass" Design (siehe Design-Tokens in
-  `src/index.css`: Holz-/Messing-/Pergamenttöne, Schriften Cinzel / Cormorant Garamond /
-  EB Garamond). Neue UI muss zu diesem Stil passen — keine generischen weißen Cards.
-  Token-Klassen verwenden (`bg-wood`, `text-brass`, `panel`, `font-display` …), keine
-  hartkodierten Farben/Fonts.
-- **Texturen (zentral in `src/index.css`)**: Drei auswechselbare Bild-Texturen als
-  CSS-Variablen — `--tex-outline` (Messing-Rahmen `outline.png`), `--tex-background`
-  (dunkle Holzfläche `background.png`), `--tex-pictureground` (Fläche hinter Bildern
-  `pictureground.png`). Die `.panel`-Klasse nutzt `--tex-outline` als **breite Outline**
-  (`border-image`, Breite über `--outline-width`) und `--tex-background` als Innenfläche.
-  Flächen **hinter Bildern** (z.B. Wiki-Schiffe: `ShipCard`-Thumbnail, `ShipDetail`-Hero,
-  PNG-Grafik) nutzen die Klasse `.picture-ground` (`--tex-pictureground`). Neue Bild-Flächen
-  immer `.picture-ground`, neue Panels immer `.panel` verwenden — Texturen nur zentral in
-  `src/index.css` tauschen.
-- **Navigationsleisten-Texturen**: Zwei weitere zentrale CSS-Variablen — `--tex-navground`
-  (`outliner.png`, Hintergrund von linker `Sidebar` + oberer `StatusBar` via Klasse
-  `.nav-ground`) und `--tex-navline` (`outline.png`, Messing-Trennlinien der Navigation).
-  Trennlinien über die Kanten-Klassen `.nav-line-r` (rechts, Sidebar), `.nav-line-b` (unten,
-  Sidebar-Kopf + StatusBar) und `.nav-line-t` (oben, Sidebar-Fuß) als `border-image`.
+- Visueller Stil: nautisches „Slate & Brass"-Design — dunkle Schiefer-/Marine-Flächen mit
+  Messing-Akzenten (angelehnt an das UI-Referenzbild). Design-Tokens zentral in
+  `src/index.css`: Schiefertöne (`--wood-deep`, `--wood`, `--wood-light`), Messing
+  (`--brass`, `--brass-bright`), kühles Label-Grau (`--ink-dim`), helles Pergament für Werte
+  (`--ink`), Status-Farben (`--pos` positiv, `--blood` Gefahr/Feind), Meer (`--sea`) sowie
+  Navigations-Grund (`--nav`, `--nav-2`). Schriften Cinzel / Cormorant Garamond / EB Garamond.
+  Neue UI muss zu diesem Stil passen — keine generischen weißen Cards. Immer Token-Klassen
+  verwenden (`bg-wood`, `text-brass`, `text-ink-dim`, `text-pos`, `panel`, `font-display` …),
+  **keine hartkodierten Farben/Fonts**. Farben nur zentral über die Tokens in `src/index.css`
+  ändern.
+- **Panels & Flächen (zentrale Klassen in `src/index.css`)**:
+  - `.panel` — flache dunkle Schiefer-Fläche mit feiner Kante (`--line`) und dezentem oberen
+    Lichtsaum; Standard für alle Fenster/Panels. `.panel-header` als abgesetzte Kopfleiste
+    mit feiner Trennlinie darunter.
+  - `.picture-ground` — Fläche **hinter Bildern** (z.B. Wiki-Schiffe: `ShipCard`-Thumbnail,
+    `ShipDetail`-Hero; Hafen-Bild im `PortDetailPanel`). Nutzt die auswechselbare Textur
+    `--tex-pictureground`.
+  - Neue Bild-Flächen immer `.picture-ground`, neue Panels immer `.panel` verwenden.
+- **Navigationsleisten**: `.nav-ground` (dunkler Schiefer-Verlauf, Hintergrund von linker
+  `Sidebar` + voll breiter oberer `StatusBar`) und die feinen Kanten-Trennlinien `.nav-line-r`
+  (rechts, Sidebar), `.nav-line-b` (unten, StatusBar) und `.nav-line-t` (oben, Sidebar-Fuß).
   Neue Navigations-Flächen `.nav-ground`, neue Nav-Trennlinien die `.nav-line-*`-Klassen.
+- **Wiederverwendbare UI-Bausteine (zentral in `src/index.css`)**: `.game-tabs` / `.game-tab`
+  (Tab-Leisten, z.B. Karte und Hafen-Detail; aktive Tabs `.is-active`), `.data-table`
+  (kompakte Datentabellen der unteren Panels), `.level-badge` (Wort-Stufen wie Sicherheit
+  oder Ressourcen-Verfügbarkeit), `.ghost-btn` (Sekundär-/„Alle anzeigen"-Buttons) und
+  `.brass-btn` (Messing-Primärbutton). Neue gleichartige Elemente diese Klassen nutzen,
+  statt Stile lokal zu duplizieren.
+- **Texturen (weiterhin zentral & auswechselbar)**: Die Bild-Texturen bleiben als CSS-
+  Variablen in `src/index.css` erhalten (`--tex-outline`, `--tex-background`,
+  `--tex-pictureground`, `--tex-navground`, `--tex-navline`, Breite `--outline-width`).
+  Aktiv genutzt wird derzeit `--tex-pictureground` (über `.picture-ground`); die übrigen sind
+  für Bild-Flächen/Sonderfälle reserviert. Texturen nur zentral hier tauschen.
 
 ### Architektur (Quelle der Wahrheit)
 - **Frontend**: React + Tailwind + shadcn/ui. Hauptseite `src/pages/Game.jsx` (Route `/`),
@@ -72,6 +85,21 @@ Mehrspieler-Weltsystem — eine gemeinsame Welt entwickelt sich über die Zeit w
 - **Spieler/Akteur**: Kompaniename, Gold, Einfluss, Fraktion, eigene Schiffe.
 - **Schiffe**: Klassen Schaluppe/Brigg/Fregatte/Galeone; Zustände Im Hafen/Unterwegs/
   Im Gefecht/Versenkt/Gekapert; Feuerkraft, Rumpf, Crew.
+- **Bildschirm-Layout (HUD)**: `Game.jsx` ordnet an: die voll breite `StatusBar` oben,
+  darunter links die `Sidebar`, rechts der Hauptbereich (Karte + `PortDetailPanel` → untere
+  `BottomPanels` → Aktionsleiste). Die `StatusBar` zeigt Wappen/Großfraktion, Kompanie mit
+  **Ruf** (aus dem Einfluss abgeleiteter Rang), den Ressourcen-Cluster (Gold/Einfluss/Crew/
+  Schiffe), Datum + Weltuhr und einen Pause-Schalter. Die `Sidebar` bündelt `Hauptmenü`
+  (Reiter) und `Kurzübersicht` (Kennzahlen). `CaribbeanMap` und `PortDetailPanel` nutzen
+  `.game-tabs` (Karten- bzw. Hafen-Tabs); `BottomPanels` sind `.data-table`-Tabellen mit
+  „Alle anzeigen"-Fußzeilen. Die Aktionsleiste bündelt `QuickActions` und den
+  `WorldUpdateTimer`.
+- **Abgeleitete Anzeigewerte (reine Darstellung, kein Backend-Feld)**: Ruf-Rang
+  (`reputationRank`), Sicherheits-/Ressourcen-Stufen (`levelFor`/`securityLevel` in
+  `src/lib/format.js`) und der Welt-Update-Countdown (`WorldUpdateTimer`, zentrale
+  Intervall-Konstante) werden aus vorhandenen Live-Daten hergeleitet. **Keine erfundenen
+  Backend-Daten** — Bereiche ohne Datenquelle (Reisen-Ziele, Aufträge, Nachrichten) zeigen
+  saubere Leerzustände, bis echte Daten über `gameState` vorliegen.
 - **Welt-Zeit & Spieldatum**: Die Welt schreitet über Ticks voran (`world_state.tick_number`,
   `game_date`, `last_tick_at`). Aus `last_tick_at` wird clientseitig eine laufende Weltzeit
   abgeleitet (Hook `src/hooks/useWorldTime.js`: 1 Spielminute pro Echtsekunde). Die
@@ -79,7 +107,9 @@ Mehrspieler-Weltsystem — eine gemeinsame Welt entwickelt sich über die Zeit w
   laufende Spieldatum (`WorldDate`). Erreicht die Weltuhr 24:00, springt das Datum auf den
   nächsten Tag — **Tag und Monat** laufen weiter, das **Jahr bleibt fix und wird nicht
   angezeigt**. Diese Zeitbasis ist Grundlage für spätere Jahreszeiten sowie für
-  Schiffsbewegungen, Missionen und Aufträge.
+  Schiffsbewegungen, Missionen und Aufträge. Die Aktionsleiste zeigt zusätzlich einen
+  Countdown „Nächstes Welt-Update" (`WorldUpdateTimer`), der aktuell auf einer zentralen
+  Intervall-Konstante beruht (bis das echte Tick-Intervall aus dem Backend geliefert wird).
 - **Onboarding**: Neue Spieler wählen Fraktion, Starthafen und Kompanienamen
   (`needsOnboarding` aus `gameState`, danach `createPlayer`).
 - **Profil**: Sidebar-Reiter `profil` zeigt das `ProfilePanel` (`src/components/game/
