@@ -145,3 +145,34 @@ npx skills add base44/skills
 - Prefer the existing Base44 CLI workflow over adding new npm scripts for Base44-specific tasks.
 - Reuse the existing SDK client and Vite plugin patterns before adding new Base44 integration paths.
 - Run the relevant checks from `package.json` before finishing code changes.
+
+## Cursor Cloud specific instructions
+
+This repo is a **frontend-only** Vite + React app; there is no local backend or database in
+the VM. The backend (Base44 functions in `base44/functions/`) and Supabase run on Base44's
+hosted infrastructure at `https://app.base44.com`.
+
+- **Dev server**: `npm run dev` (Vite on port 5173). The Base44 Vite plugin proxies `/api`
+  to `VITE_BASE44_APP_BASE_URL`. That variable lives in `.env.local`, which is gitignored
+  and therefore recreated per environment — the update script does not create it. Required
+  content (public values only, no secrets):
+  ```
+  VITE_BASE44_APP_ID=6a43defde92c0d47de02330a
+  VITE_BASE44_APP_BASE_URL=https://app.base44.com
+  ```
+  Without `VITE_BASE44_APP_BASE_URL` the dev server logs `[base44] Proxy not enabled` and all
+  `/api` calls (auth, `gameState`, etc.) fail.
+- **Auth gate (important)**: This app is **restricted to Base44 workspace members**. An
+  unauthenticated visitor to `localhost:5173` is redirected to Base44's hosted SSO login at
+  `app.base44.com/login` (Google/Apple/GitHub/email). The custom `/login` page in `src/pages`
+  is effectively bypassed by this redirect. To reach the game UI (onboarding, map, trading)
+  you must be logged in to Base44 as a workspace member — e.g. log in through the Desktop
+  pane; the session then flows back to the local app via `access_token`.
+- **Checks**: `npm run lint` is the enforced check (passes clean). `npm run build` works.
+  `npm run typecheck` (`tsc`) reports **pre-existing** type errors in the JSX auth pages
+  (`Register.jsx`, `ResetPassword.jsx`, etc.) because components are untyped `.jsx`; it is not
+  an enforced gate — do not treat these as regressions.
+- **`base44 dev` caveat**: The `base44` CLI is **not** preinstalled and is not needed for
+  frontend work. Running the local backend via `base44 dev` would additionally require a
+  Base44 CLI login and the Supabase secrets (`SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`,
+  `SUPABASE_ANON_KEY`); prefer `npm run dev` against the hosted backend instead.
