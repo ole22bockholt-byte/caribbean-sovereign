@@ -13,6 +13,12 @@ const FLAG_BY_CODE = {
   neutral: "⚪",
 };
 
+// Flaggen-Bilder je Fraktion (auswechselbar). Fehlt ein Bild, fällt die UI auf
+// das Emoji aus FLAG_BY_CODE zurück.
+const FLAG_IMG_BY_CODE = {
+  gb: "https://media.base44.com/images/public/6a43defde92c0d47de02330a/78c446dd1_gb_union_jack.webp",
+};
+
 const TREND_LABEL = (t) => (t > 0 ? "up" : t < 0 ? "down" : "flat");
 
 const SHIP_CLASS_LABEL = {
@@ -124,4 +130,9 @@ export function transformGameState(raw) {
 
 export function factionFlag(code) {
   return FLAG_BY_CODE[code] || "⚑";
+}
+
+// Liefert die Bild-URL der Flagge einer Fraktion (oder null, wenn keine hinterlegt).
+export function factionFlagImage(code) {
+  return FLAG_IMG_BY_CODE[code] || null;
 }

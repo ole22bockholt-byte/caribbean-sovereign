@@ -60,6 +60,12 @@ Mehrspieler-Weltsystem — eine gemeinsame Welt entwickelt sich über die Zeit w
 ### Kern-Spielkonzepte
 - **Fraktionen**: Großbritannien (gb), Spanien (es), Frankreich (fr), Niederlande (nl),
   Piraten (pirate), Neutral (neutral). Jede mit Code, Name, Farbe, Flagge.
+- **Fraktions-Flaggen (Bilder)**: In `src/lib/gameData.js` bündelt `FLAG_IMG_BY_CODE`
+  auswechselbare Flaggen-**Bild-URLs** je Fraktions-Code; `factionFlagImage(code)` liefert
+  die URL (oder `null`). Wo eine Flagge angezeigt wird (z.B. `StatusBar` „Großfraktion“),
+  wird das Bild bevorzugt und fällt auf das Emoji aus `FLAG_BY_CODE`/`factionFlag(code)`
+  zurück, falls keine Bild-URL hinterlegt ist. Neue/geänderte Flaggen nur zentral in
+  `FLAG_IMG_BY_CODE` pflegen.
 - **Häfen**: Position (x/y auf der Karte), kontrollierende Fraktion, Sicherheit,
   Fraktionseinfluss, lokale Marktpreise.
 - **Markt**: Waren mit Kauf-/Verkaufspreisen und Trend je Hafen.

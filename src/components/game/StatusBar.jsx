@@ -1,6 +1,6 @@
 import React from "react";
 import { Coins, TrendingUp, Ship, CalendarDays, Timer } from "lucide-react";
-import { factionFlag } from "@/lib/gameData";
+import { factionFlag, factionFlagImage } from "@/lib/gameData";
 import { formatGold } from "@/lib/format";
 import WorldClock from "./WorldClock";
 import WorldDate from "./WorldDate";
@@ -19,11 +19,21 @@ function Stat({ icon: Icon, label, value, accent }) {
 
 export default function StatusBar({ player, world, factionByCode }) {
   const faction = factionByCode?.[player?.factionCode];
+  const flagImg = factionFlagImage(player?.factionCode);
 
   return (
     <header className="nav-ground nav-line-b flex items-stretch divide-x divide-[var(--line)]">
       <div className="flex items-center gap-2.5 px-4 py-2">
-        <span className="text-xl" title={faction?.name}>{factionFlag(player?.factionCode)}</span>
+        {flagImg ? (
+          <img
+            src={flagImg}
+            alt={faction?.name || "Flagge"}
+            title={faction?.name}
+            className="w-7 h-[18px] object-cover rounded-[2px] border border-line shadow-sm"
+          />
+        ) : (
+          <span className="text-xl" title={faction?.name}>{factionFlag(player?.factionCode)}</span>
+        )}
         <div className="leading-tight">
           <div className="text-[9px] uppercase tracking-[0.16em] text-ink-dim font-body-game">Großfraktion</div>
           <div className="text-sm font-display text-ink">{faction?.name || "—"}</div>
