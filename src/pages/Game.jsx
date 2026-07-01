@@ -8,6 +8,7 @@ import CaribbeanMap from "@/components/game/CaribbeanMap";
 import PortDetailPanel from "@/components/game/PortDetailPanel";
 import BottomPanels from "@/components/game/BottomPanels";
 import ProfilePanel from "@/components/game/ProfilePanel";
+import ShipView from "@/components/game/ships/ShipView";
 import WikiPanel from "@/components/game/wiki/WikiPanel";
 import StartScreen from "@/components/game/StartScreen";
 import QuickActions from "@/components/game/QuickActions";
@@ -90,6 +91,17 @@ export default function Game() {
           <Sidebar active={active} onSelect={setActive} overview={overview} />
 
           <div className="flex-1 flex flex-col min-w-0">
+            {active === "schiffe" ? (
+              <div className="flex-1 min-h-0 p-3 overflow-hidden">
+                <ShipView
+                  player={data.player}
+                  factionByCode={data.factionByCode}
+                  portNameByUuid={portNameByUuid}
+                  onNavigate={setActive}
+                />
+              </div>
+            ) : (
+            <>
             <div className="flex-1 flex gap-3 p-3 min-h-0">
               {active === "profil" ? (
                 <div className="flex-1 min-w-0 overflow-y-auto thin-scroll">
@@ -130,6 +142,8 @@ export default function Game() {
                 <WorldUpdateTimer lastTickAt={data.world?.last_tick_at} />
               </div>
             </div>
+            </>
+            )}
           </div>
         </div>
       </div>

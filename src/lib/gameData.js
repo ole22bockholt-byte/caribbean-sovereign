@@ -19,6 +19,8 @@ const FLAG_IMG_BY_CODE = {
   gb: "https://media.base44.com/images/public/6a43defde92c0d47de02330a/78c446dd1_gb_union_jack.webp",
 };
 
+import { DUMMY_RESOLUTE } from "./shipData";
+
 const TREND_LABEL = (t) => (t > 0 ? "up" : t < 0 ? "down" : "flat");
 
 const SHIP_CLASS_LABEL = {
@@ -116,6 +118,15 @@ export function transformGameState(raw) {
         })),
       }
     : null;
+
+  // Dummy-Fregatte „Resolute" für alle Nutzer ergänzen (Platzhalter bis Backend-
+  // Anbindung). Liegt im ersten verfügbaren Hafen, damit sie „Im Hafen" erscheint.
+  if (player) {
+    player.ships = [
+      ...player.ships,
+      { ...DUMMY_RESOLUTE, locationPortUuid: ports[0]?.uuid || null },
+    ];
+  }
 
   return {
     needsOnboarding: raw.needsOnboarding,
