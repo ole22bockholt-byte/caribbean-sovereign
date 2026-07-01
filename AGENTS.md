@@ -145,3 +145,10 @@ npx skills add base44/skills
 - Prefer the existing Base44 CLI workflow over adding new npm scripts for Base44-specific tasks.
 - Reuse the existing SDK client and Vite plugin patterns before adding new Base44 integration paths.
 - Run the relevant checks from `package.json` before finishing code changes.
+
+## Cursor Cloud specific instructions
+
+- Frontend-only dev is the practical setup here: `npm run dev` (Vite) is the run command; the `base44` CLI is not installed and `base44 dev` would require an interactive Base44 login. Standard checks live in `package.json`: `npm run lint`, `npm run build`.
+- The Vite `/api` proxy only turns on when `VITE_BASE44_APP_BASE_URL` is set. Without it the plugin logs `[base44] Proxy not enabled` and all backend calls fail. The startup update script writes a `.env.local` (gitignored) pointing `VITE_BASE44_APP_ID` at the repo app id and `VITE_BASE44_APP_BASE_URL=https://app.base44.com`; if it is missing, recreate it before running the dev server.
+- This Base44 app is workspace-restricted: unauthenticated `/api` calls return `403 { reason: "auth_required" }`, and loading `/` redirects to the hosted `app.base44.com` login. Any authenticated flow (login, onboarding/company creation, `gameState`, and other `base44.functions.invoke`/Supabase-backed features) needs a Base44 account that is a member of this app's workspace. There is no local/mock auth path in production code (`src/lib/mockData.js` is not wired into live paths).
+- `npm run typecheck` (tsc over `.jsx` via `jsconfig.json`) reports pre-existing errors and is not part of the required check set; treat `lint` + `build` as the gating checks unless a task specifically targets types.
