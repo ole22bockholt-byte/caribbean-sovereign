@@ -37,7 +37,7 @@ export default function BottomPanels({ player, portNameByUuid, onSelect }) {
   const sailing = ships.filter((s) => s.status === "Unterwegs");
 
   return (
-    <div className="grid grid-cols-4 gap-3 h-full min-h-0">
+    <div className="grid grid-cols-4 gap-1 h-full min-h-0">
       {/* Eigene Schiffe */}
       <PanelShell
         title="Eigene Schiffe"

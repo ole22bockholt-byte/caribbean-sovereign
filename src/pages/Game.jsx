@@ -92,7 +92,7 @@ export default function Game() {
 
           <div className="flex-1 flex flex-col min-w-0">
             {active === "schiffe" ? (
-              <div className="flex-1 min-h-0 p-3 overflow-hidden">
+              <div className="flex-1 min-h-0 p-1 overflow-hidden">
                 <ShipView
                   player={data.player}
                   factionByCode={data.factionByCode}
@@ -102,7 +102,7 @@ export default function Game() {
               </div>
             ) : (
             <>
-            <div className="flex-1 flex gap-3 p-3 min-h-0">
+            <div className="flex-1 flex gap-1 p-1 min-h-0">
               {active === "profil" ? (
                 <div className="flex-1 min-w-0 overflow-y-auto thin-scroll">
                   <ProfilePanel player={data.player} factionByCode={data.factionByCode} />
@@ -132,11 +132,11 @@ export default function Game() {
               )}
             </div>
 
-            <div className="h-[196px] shrink-0 px-3 pb-2">
+            <div className="h-[196px] shrink-0 px-1 pb-1">
               <BottomPanels player={data.player} portNameByUuid={portNameByUuid} onSelect={setActive} />
             </div>
 
-            <div className="shrink-0 px-3 pb-3">
+            <div className="shrink-0 px-1 pb-1">
               <div className="panel rounded-sm flex items-center justify-between px-3 py-1.5">
                 <QuickActions onAction={handleQuickAction} />
                 <WorldUpdateTimer lastTickAt={data.world?.last_tick_at} />
