@@ -1,5 +1,4 @@
 import React from "react";
-import { formatCountdown } from "@/lib/format";
 
 // =============================================================================
 // ShipToken — fahrendes Schiff auf der Karte. Der Rumpf zeigt in Fahrtrichtung
@@ -36,7 +35,7 @@ export default function ShipToken({ ship }) {
       </svg>
       <span className="mt-0.5 px-1 py-px rounded-sm text-[9px] font-display whitespace-nowrap bg-[rgba(11,17,22,0.85)] text-brass-bright border border-brass/60 flex items-center gap-1">
         {ship.shipName}
-        <span className="text-ink-dim font-body-game">{formatCountdown(ship.etaSeconds)}</span>
+        <span className="text-ink-dim font-body-game">{ship.etaGameLabel}</span>
       </span>
     </div>
   );

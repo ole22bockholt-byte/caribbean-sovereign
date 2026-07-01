@@ -14,14 +14,6 @@ const CELL = 100 / GRID; // Zellgröße in Karteneinheiten
 const CLEARANCE = 0.45; // Sicherheitsabstand zur Küste beim Glätten
 const GRID_MARGIN = 0.35; // Küstenpuffer beim Rastern (schmale Kanäle bleiben frei)
 
-// Reisedauer aus der Weglänge (Einheiten). Client-seitige Taktung, damit die
-// Bewegung sichtbar ist: kurze Sprünge ~einige Sekunden, Querungen ~1 Minute.
-const MS_PER_UNIT = 520;
-const MIN_MS = 4000;
-export function estimateDurationMs(length) {
-  return Math.max(MIN_MS, Math.round(length * MS_PER_UNIT));
-}
-
 // Rasternetz einmalig aufbauen (blocked[row][col]).
 let blockedGrid = null;
 function grid() {
@@ -166,7 +158,7 @@ export function computeSeaRoute(from, to) {
     points = [{ x: from.x, y: from.y }, ...smoothed, { x: to.x, y: to.y }];
   }
   const length = routeLength(points);
-  return { points, length, durationMs: estimateDurationMs(length) };
+  return { points, length };
 }
 
 // Position & Kurs auf einem Pfad zum Fortschritt t (0..1).

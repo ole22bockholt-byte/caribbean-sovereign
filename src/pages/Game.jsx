@@ -26,6 +26,7 @@ import { useGameState } from "@/hooks/useGameState";
 import { useEconomy } from "@/hooks/useEconomy";
 import { availableServices, serviceAvailability, SERVICE_IDS } from "@/lib/portServices";
 import { cargoWeight } from "@/lib/goodsData";
+import { estimateVoyage, shipSpeedKnots, formatGameDuration } from "@/lib/voyageTime";
 
 const PARCHMENT = "https://media.base44.com/images/public/6a43defde92c0d47de02330a/ebfe1567b_generated_image.png";
 
@@ -127,9 +128,11 @@ export default function Game() {
     return computeSeaRoute(from, selectedPort);
   }, [selectedShip, selectedPort, portById]);
 
-  const routeInfo = planned
-    ? { distanceSm: Math.round(planned.length * 22), durationSeconds: Math.round(planned.durationMs / 1000) }
-    : null;
+  const routeInfo = useMemo(() => {
+    if (!planned || !selectedShip) return null;
+    const est = estimateVoyage(planned.length, shipSpeedKnots(selectedShip));
+    return { distanceSm: est.distanceNm, gameLabel: formatGameDuration(est.gameMinutes) };
+  }, [planned, selectedShip]);
 
   const handleStartVoyage = () => {
     if (!selectedShip || !selectedPort || selectedShip.currentPortId === selectedPort.id) return;
@@ -138,6 +141,7 @@ export default function Game() {
       shipName: selectedShip.name,
       fromPortId: selectedShip.currentPortId,
       toPortId: selectedPort.id,
+      speedKn: shipSpeedKnots(selectedShip),
     });
     toast({
       title: "Segel gesetzt",

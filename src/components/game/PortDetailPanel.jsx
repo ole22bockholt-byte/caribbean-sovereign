@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Anchor, TrendingUp, TrendingDown, Minus, ArrowRight, Navigation2, Ship } from "lucide-react";
 import { factionFlag } from "@/lib/gameData";
-import { securityLevel, levelFor, formatCountdown } from "@/lib/format";
+import { securityLevel, levelFor } from "@/lib/format";
 
 const HARBOR_IMG = "https://media.base44.com/images/public/6a43defde92c0d47de02330a/c5394dcd2_generated_image.png";
 
@@ -258,7 +258,7 @@ function TravelPlanner({ port, dockedShips, selectedShipId, onSelectShip, routeI
             </span>
             {routeInfo && !alreadyHere && (
               <span className="text-brass whitespace-nowrap ml-2">
-                ~{routeInfo.distanceSm} sm · {formatCountdown(routeInfo.durationSeconds)}
+                ~{routeInfo.distanceSm} sm · {routeInfo.gameLabel}
               </span>
             )}
           </div>

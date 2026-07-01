@@ -1,5 +1,6 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { computeSeaRoute, pointAlong } from "@/lib/seaRoute";
+import { estimateVoyage, formatGameDuration } from "@/lib/voyageTime";
 
 // =============================================================================
 // useVoyages — verwaltet laufende Schiffsreisen als physische Bewegung über die
@@ -28,7 +29,6 @@ function loadStored() {
 export function useVoyages(ports) {
   const [voyages, setVoyages] = useState(loadStored);
   const [now, setNow] = useState(() => Date.now());
-  const rafRef = useRef(null);
 
   const portById = useMemo(() => {
     const m = {};
@@ -52,12 +52,15 @@ export function useVoyages(ports) {
   }, [hasActive]);
 
   const startVoyage = useCallback(
-    ({ shipId, shipName, fromPortId, toPortId }) => {
+    ({ shipId, shipName, fromPortId, toPortId, speedKn }) => {
       const from = portById[fromPortId];
       const to = portById[toPortId];
       if (!to || fromPortId === toPortId) return null;
       const origin = from || { x: to.x, y: to.y };
-      const { points, length, durationMs } = computeSeaRoute(origin, to);
+      const { points, length } = computeSeaRoute(origin, to);
+      // Realistische Reisedauer aus Geschwindigkeit × Distanz (Game-Zeit) +
+      // die zeitgeraffte reale Abspieldauer.
+      const { distanceNm, gameMinutes, realMs } = estimateVoyage(length, speedKn);
       const departAt = Date.now();
       const voyage = {
         id: `voy_${shipId}_${departAt}`,
@@ -69,8 +72,11 @@ export function useVoyages(ports) {
         toName: to.name,
         route: points,
         length,
+        distanceNm,
+        gameMinutes,
+        speedKn: speedKn || null,
         departAt,
-        arriveAt: departAt + durationMs,
+        arriveAt: departAt + realMs,
       };
       // Bestehende Reise desselben Schiffs ersetzen.
       setVoyages((prev) => [...prev.filter((v) => v.shipId !== shipId), voyage]);
@@ -91,13 +97,16 @@ export function useVoyages(ports) {
       .map((v) => {
         const t = (now - v.departAt) / (v.arriveAt - v.departAt);
         const pos = pointAlong(v.route, t);
+        const remainingFraction = Math.min(1, Math.max(0, 1 - t));
+        const gameMinutesRemaining = (v.gameMinutes || 0) * remainingFraction;
         return {
           ...v,
           x: pos.x,
           y: pos.y,
           heading: pos.heading,
           progress: Math.min(1, Math.max(0, t)),
-          etaSeconds: Math.max(0, Math.round((v.arriveAt - now) / 1000)),
+          gameMinutesRemaining,
+          etaGameLabel: formatGameDuration(gameMinutesRemaining),
         };
       });
   }, [voyages, now]);

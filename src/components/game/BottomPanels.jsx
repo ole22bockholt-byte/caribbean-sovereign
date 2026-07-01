@@ -1,6 +1,5 @@
 import React from "react";
 import { Ship, Navigation, ScrollText, Mail } from "lucide-react";
-import { formatCountdown } from "@/lib/format";
 import { formatTons } from "@/lib/goodsData";
 
 // Gemeinsame Hülle: Kopf mit Titel/Anzahl, scrollbarer Inhalt, Fußzeile mit Aktion.
@@ -103,7 +102,7 @@ export default function BottomPanels({ ships = [], voyages = [], onSelect }) {
                   <td className="font-serif-game text-[13px]">{v.shipName}</td>
                   <td className="text-ink-dim">{v.fromName}</td>
                   <td className="text-ink-dim">{v.toName}</td>
-                  <td className="text-right text-brass-bright">{formatCountdown(v.etaSeconds)}</td>
+                  <td className="text-right text-brass-bright">{v.etaGameLabel}</td>
                 </tr>
               ))}
             </tbody>

@@ -30,6 +30,7 @@ import { useVoyages } from "@/hooks/useVoyages";
 import { useEconomy } from "@/hooks/useEconomy";
 import { formatGold } from "@/lib/format";
 import { cargoWeight, formatTons } from "@/lib/goodsData";
+import { estimateVoyage, shipSpeedKnots, formatGameDuration } from "@/lib/voyageTime";
 
 if (typeof location !== "undefined" && location.search.includes("reset")) {
   try {
@@ -140,13 +141,15 @@ function Harness() {
     return from ? computeSeaRoute(from, selectedPort) : null;
   }, [selectedShip, selectedPort, portById]);
 
-  const routeInfo = planned
-    ? { distanceSm: Math.round(planned.length * 22), durationSeconds: Math.round(planned.durationMs / 1000) }
-    : null;
+  const routeInfo = useMemo(() => {
+    if (!planned || !selectedShip) return null;
+    const est = estimateVoyage(planned.length, shipSpeedKnots(selectedShip));
+    return { distanceSm: est.distanceNm, gameLabel: formatGameDuration(est.gameMinutes) };
+  }, [planned, selectedShip]);
 
   const handleStartVoyage = () => {
     if (!selectedShip || selectedShip.currentPortId === selectedPort.id) return;
-    startVoyage({ shipId: selectedShip.id, shipName: selectedShip.name, fromPortId: selectedShip.currentPortId, toPortId: selectedPort.id });
+    startVoyage({ shipId: selectedShip.id, shipName: selectedShip.name, fromPortId: selectedShip.currentPortId, toPortId: selectedPort.id, speedKn: shipSpeedKnots(selectedShip) });
     toast({ title: "Segel gesetzt", description: `${selectedShip.name} nimmt Kurs auf ${selectedPort.name}.` });
   };
 
@@ -157,7 +160,7 @@ function Harness() {
     if (params.get("demo") === "1") {
       demoInitialized.current = true;
       setTimeout(() => {
-        startVoyage({ shipId: "s3", shipName: "Mistral", fromPortId: "cap_francais", toPortId: "santo_domingo" });
+        startVoyage({ shipId: "s3", shipName: "Mistral", fromPortId: "cap_francais", toPortId: "santo_domingo", speedKn: 8 });
       }, 100);
     }
   }, [startVoyage]);
