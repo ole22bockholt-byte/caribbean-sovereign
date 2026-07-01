@@ -181,24 +181,38 @@ npx skills add base44/skills
 
 This repo is a **frontend-only** Vite + React app; there is no local backend or database in
 the VM. The backend (Base44 functions in `base44/functions/`) and Supabase run on Base44's
-hosted infrastructure at `https://app.base44.com`.
+hosted infrastructure.
 
 - **Dev server**: `npm run dev` (Vite on port 5173). The Base44 Vite plugin proxies `/api`
-  to `VITE_BASE44_APP_BASE_URL`. That variable lives in `.env.local`, which is gitignored
-  and therefore recreated per environment — the update script does not create it. Required
-  content (public values only, no secrets):
-  ```
-  VITE_BASE44_APP_ID=6a43defde92c0d47de02330a
-  VITE_BASE44_APP_BASE_URL=https://app.base44.com
-  ```
-  Without `VITE_BASE44_APP_BASE_URL` the dev server logs `[base44] Proxy not enabled` and all
-  `/api` calls (auth, `gameState`, etc.) fail.
-- **Auth gate (important)**: This app is **restricted to Base44 workspace members**. The
- backend `public-settings` check returns `403 { reason: auth_required }` for anyone who is
- not a workspace member — even after a successful SSO login and even with a token present.
- To reach the game UI (onboarding, map, trading) you must be logged in to Base44 as a
- **workspace member** (e.g. through the Desktop pane); the session then flows back to the
- local app via `access_token`.
+ to `VITE_BASE44_APP_BASE_URL`. That variable lives in `.env.local`, which is gitignored
+ and therefore recreated per environment — the update script does not create it. Required
+ content (public values only, no secrets):
+ ```
+ VITE_BASE44_APP_ID=6a43defde92c0d47de02330a
+ VITE_BASE44_APP_BASE_URL=https://6a43defde92c0d47de02330a.base44.app
+ ```
+ Without `VITE_BASE44_APP_BASE_URL` the dev server logs `[base44] Proxy not enabled` and all
+ `/api` calls fail.
+- **Use the app SUBDOMAIN, not the platform domain (critical)**: `VITE_BASE44_APP_BASE_URL`
+ must be the app's own `*.base44.app` subdomain (`https://6a43defde92c0d47de02330a.base44.app`).
+ Do **not** use the platform domain `https://app.base44.com`. On the platform domain,
+ `public-settings`/`auth.me()` succeed (so the frontend renders), but **backend function
+ calls are rejected**: `POST /apps/<id>/functions/gameState` returns
+ `403 "Backend functions cannot be accessed from the platform domain. Use the app's subdomain
+ instead."` — the game then hangs forever on the "LADE WELT" start screen. Routing is by the
+ `X-App-Id` header, so any resolving `*.base44.app` host works, but use the app-id subdomain.
+- **Auth gate (important)**: This app is **restricted to Base44 workspace members**
+ (`public_settings: "workspace_with_login"`). To reach the game UI you must log in with a
+ Base44 account that is a member of **this app's** workspace. Working flow (with the subdomain
+ configured above): open `http://localhost:5173/login` → "Continue with Google" → sign in →
+ you land on the game start screen ("Press any button to start"), then the map/HUD.
+- **Log in through the app subdomain, not the platform domain (critical)**: The token must be
+ issued for this app's workspace. When `VITE_BASE44_APP_BASE_URL` was the platform domain, the
+ login-issued JWT had `workspaces: []` and every function call returned
+ `403 "restricted to workspace members"`. After pointing `VITE_BASE44_APP_BASE_URL` at the
+ `*.base44.app` subdomain, a **fresh** login (clear stale `localStorage` first) yields a token
+ that `gameState` accepts (HTTP 200) and the world loads. If you were previously stuck, clear
+ site data / `localStorage` and log in again so the new token is issued via the subdomain.
 - **Login-loop workaround (`src/App.jsx`)**: Previously `AuthenticatedApp` force-redirected
  on `auth_required` to the hosted SSO (`base44.auth.redirectToLogin`), so a logged-in
  non-member looped forever (login → back → `auth_required` → login …). Now, on
