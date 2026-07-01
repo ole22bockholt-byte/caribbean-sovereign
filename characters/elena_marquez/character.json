@@ -1,0 +1,16 @@
+{
+  "name": "Elena Márquez",
+  "category": "function_officer",
+  "rank": "Zahlmeisterin",
+  "factionCode": "es",
+  "experience": "Fortgeschritten",
+  "rarity": "uncommon",
+  "status": "busy",
+  "skills": {
+    "Logistik": 4,
+    "Handel": 4,
+    "Buchführung": 5
+  },
+  "uniqueAbilities": [],
+  "summary": "Hält die Vorräte im Griff und drückt jeden Handelspreis."
+}
