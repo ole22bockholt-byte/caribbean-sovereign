@@ -1,7 +1,10 @@
 # Ausrüstung — `equipment/` (Karibik 1765)
 
-Zentrale Datenquelle für alle **Ausrüstungsgegenstände**. `wikiShips` liest diesen
-Ordner aus und speist das Wiki. Manuell erweiterbar — neue Items erscheinen automatisch.
+Zentrale Datenquelle für alle **Ausrüstungsgegenstände**. Manuell erweiterbar — neue
+Items erscheinen automatisch in Werkzeugen, die den Katalog auslesen.
+
+> **Übersicht & Ablauf zum Anlegen:** siehe [`docs/inhalte-hinzufuegen.md`](../docs/inhalte-hinzufuegen.md).
+> **Prüfen:** `npm run validate:content` validiert diesen Ordner (Schema + Referenzen).
 
 ## Aufbau: ein Ordner je Slot-Kategorie, ein Unterordner je Item
 
@@ -12,32 +15,37 @@ equipment/<slotKey>/
 ```
 
 Bekannte Slot-Kategorien: `hull_material`, `main_battery`, `deck_gun`, `ammunition`.
-Neue Kategorie = neuer Ordner mit `slot.json`.
+Neue Kategorie = neuer Ordner mit `slot.json` (dessen `key` == Ordnername).
 
 ## `part.json` — ein Ausrüstungsgegenstand
 
 | Feld      | Typ    | Pflicht | Bedeutung                                                       |
 |-----------|--------|---------|-----------------------------------------------------------------|
-| `id`      | string | ja      | Eindeutige ID (= Ordnername, z. B. `18pdr`).                    |
-| `slot`    | string | ja      | Slot-Kategorie (`main_battery` …).                             |
+| `id`      | string | ja      | Eindeutige ID — **muss dem Ordnernamen entsprechen** (`18pdr`). |
+| `slot`    | string | ja      | Slot-Kategorie — **muss dem `key` des Slots entsprechen**.      |
 | `name`    | string | ja      | Anzeigename.                                                    |
 | `class`   | string | ja      | Klassen-Tag `<Schweregrad>-<Stufe>` (z. B. `Schwer-C`).         |
 | `summary` | string | nein    | Kurzbeschreibung.                                               |
 | `stats`   | object | nein    | Beliebige Werte (generisch angezeigt).                          |
 
-### Klassen-Tags (manuell vergeben)
+### Klassen-Tag: zwei Achsen (`class`)
 
-**Zuerst der Schweregrad, dann die Stufe.**
-Schweregrade: **Schwer, Mittelschwer, Standard, Mittelleicht, Leicht**.
-Stufen (schwach → stark): **F → E → D → C → B → A → S**.
+Das `class`-Tag kodiert **zwei unabhängige Achsen** in der Form `<Schweregrad>-<Stufe>`:
 
-`class` = `<Schweregrad>-<Stufe>`, z. B. `Leicht-S`, `Schwer-C`, `Standard-F`.
+- **Schweregrad** (physische Bauart): `Schwer`, `Mittelschwer`, `Standard`, `Mittelleicht`, `Leicht`.
+  → Entscheidet über die **Passform** an einem Schiff (siehe `allowedWeights` unten).
+- **Stufe** (Stärke/Progression, schwach → stark): `F → E → D → C → B → A → S`.
+  → Rein qualitativ; optional per `allowedTiers` am Schiff begrenzbar.
+
+Beispiel: `Leicht-S`, `Schwer-C`, `Standard-F`.
 
 ## Welche Items passen an ein Schiff?
 
-In der `ship.json` legt jeder Slot über `allowedClasses` fest, welche **Stufen-Buchstaben**
-dort einsetzbar sind. Im Wiki werden je Slot nur Items dieser Stufen als „einsetzbar"
-gelistet; `default` markiert das ausgerüstete Standard-Item.
+In der `ship.json` legt **jeder Slot** über `allowedWeights` fest, welche **Schweregrade**
+dort einsetzbar sind. Nur Items, deren Schweregrad in `allowedWeights` liegt, passen an
+diesen Slot. `default` benennt das ab Werk ausgerüstete Item (dessen Schweregrad muss
+selbst in `allowedWeights` liegen — das prüft der Validator). Optional begrenzt
+`allowedTiers` zusätzlich die erlaubten Stufen. Details: [`ships/README.md`](../ships/README.md).
 
 ## Beispiel `equipment/main_battery/18pdr/part.json`
 
@@ -55,6 +63,7 @@ gelistet; `default` markiert das ausgerüstete Standard-Item.
 ## Neues Item anlegen
 
 1. Unterordner unter der Slot-Kategorie anlegen (z. B. `main_battery/32pdr/`).
-2. `part.json` mit `id`, `slot`, `name`, `class` erstellen.
+2. `part.json` mit `id` (== Ordnername), `slot` (== Slot-`key`), `name`, `class` erstellen.
 3. Optional `summary` und `stats` ergänzen.
-4. Fertig — das Wiki zeigt das Item bei allen Schiffen, deren Slot die Stufe erlaubt.
+4. `npm run validate:content` ausführen — grün heißt: das Item ist sauber verlinkt und
+   erscheint bei allen Schiffen, deren Slot seinen Schweregrad erlaubt.
