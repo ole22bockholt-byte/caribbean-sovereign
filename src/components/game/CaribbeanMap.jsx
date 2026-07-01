@@ -68,7 +68,7 @@ export default function CaribbeanMap({
             aria-hidden="true"
             draggable="false"
             className="absolute inset-0 w-full h-full pointer-events-none select-none"
-            style={{ mixBlendMode: "screen", opacity: 0.9 }}
+            style={{ mixBlendMode: "screen", opacity: 0.55 }}
           />
 
           {/* Seewege (geplant + laufend) */}

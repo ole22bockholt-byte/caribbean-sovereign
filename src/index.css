@@ -19,14 +19,14 @@
   --line-strong: #3c525d;    /* betonte Trennlinie */
   --blood: #b23a46;          /* Gefahr / Feind / negativ */
   --pos: #5aa06a;            /* positiv (Zuwächse, verbündet) */
-  --sea: #0f2732;            /* tiefes Meer (Karte) */
-  --sea-deep: #0a1a22;       /* Tiefsee (Karten-Verlauf außen) */
-  --sea-shallow: #163743;    /* flacheres Wasser (Verlauf innen) */
-  --land: #24323b;           /* Landfläche (Karte) */
-  --land-hi: #2f414c;        /* Land-Lichtseite (Verlauf) */
-  --coast: #6b8a97;          /* Küstenlinie */
-  --shoal: rgba(120,170,182,0.16); /* Flachwasser-Saum um Land */
-  --graticule: rgba(200,162,76,0.08); /* Gitternetz (Seekarte) */
+  --sea: #17323b;            /* Meer (Karte) — gealterte Seekarte */
+  --sea-deep: #0c1d24;       /* Tiefsee (Verlauf außen) */
+  --sea-shallow: #245863;    /* flaches Wasser (Verlauf innen, heller) */
+  --land: #b7a377;           /* Landfläche — warmes Pergament/Land */
+  --land-hi: #d0bd8e;        /* Land-Lichtseite (sonnenbeschienen) */
+  --coast: #6d5836;          /* Küstenlinie (Sepia) */
+  --shoal: rgba(160,196,196,0.22); /* Flachwasser-/Tiefenlinie um Land */
+  --graticule: rgba(196,162,86,0.10); /* Gitternetz (Seekarte) */
   --nav: #101a20;            /* Navigations-/Statusleisten-Grund */
   --nav-2: #16232b;          /* Navigations-Verlauf hell */
 
