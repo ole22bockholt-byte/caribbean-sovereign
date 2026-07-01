@@ -11,6 +11,7 @@ import ProfilePanel from "@/components/game/ProfilePanel";
 import WikiPanel from "@/components/game/wiki/WikiPanel";
 import StartScreen from "@/components/game/StartScreen";
 import QuickActions from "@/components/game/QuickActions";
+import WorldUpdateTimer from "@/components/game/WorldUpdateTimer";
 import Onboarding from "@/components/game/Onboarding";
 import TradeModal from "@/components/game/modals/TradeModal";
 import BuildShipModal from "@/components/game/modals/BuildShipModal";
@@ -33,6 +34,18 @@ export default function Game() {
     () => Object.fromEntries(ports.map((p) => [p.uuid, p.name])),
     [ports]
   );
+
+  const overview = useMemo(() => {
+    const ships = data?.player?.ships || [];
+    const sailing = ships.filter((s) => s.status === "Unterwegs").length;
+    return [
+      { label: "Aktive Aufträge", value: 0, to: "auftraege" },
+      { label: "Laufende Reisen", value: sailing, to: "flotte" },
+      { label: "Bauprojekte", value: 0, to: "siedlung" },
+      { label: "Forschung", value: 0 },
+      { label: "Ausbildungen", value: 0, to: "charaktere" },
+    ];
+  }, [data]);
 
   const handleQuickAction = (id) => {
     if (id === "trade") setModal("trade");
@@ -68,51 +81,55 @@ export default function Game() {
       className="h-screen w-screen overflow-hidden flex text-ink font-body-game"
       style={{ backgroundImage: `url(${PARCHMENT})`, backgroundSize: "cover" }}
     >
-      <div className="absolute inset-0 bg-[var(--wood-deep)]/88" />
+      <div className="absolute inset-0 bg-[var(--wood-deep)]/90" />
 
-      <div className="relative z-10 flex w-full h-full">
-        <Sidebar active={active} onSelect={setActive} />
+      <div className="relative z-10 flex flex-col w-full h-full">
+        <StatusBar player={data.player} world={data.world} factionByCode={data.factionByCode} />
 
-        <div className="flex-1 flex flex-col min-w-0">
-          <StatusBar player={data.player} world={data.world} factionByCode={data.factionByCode} />
+        <div className="flex-1 flex min-h-0 min-w-0">
+          <Sidebar active={active} onSelect={setActive} overview={overview} />
 
-          <div className="flex-1 flex gap-3 p-3 min-h-0">
-            {active === "profil" ? (
-              <div className="flex-1 min-w-0 overflow-y-auto thin-scroll">
-                <ProfilePanel player={data.player} factionByCode={data.factionByCode} />
-              </div>
-            ) : active === "wiki" ? (
-              <div className="flex-1 min-w-0 overflow-y-auto thin-scroll">
-                <WikiPanel />
-              </div>
-            ) : (
-              <>
-                <div className="flex-1 min-w-0">
-                  <CaribbeanMap
-                    ports={ports}
-                    factionByCode={data.factionByCode}
-                    selectedPortId={selectedPort?.id}
-                    onSelectPort={setSelectedPortId}
-                  />
+          <div className="flex-1 flex flex-col min-w-0">
+            <div className="flex-1 flex gap-3 p-3 min-h-0">
+              {active === "profil" ? (
+                <div className="flex-1 min-w-0 overflow-y-auto thin-scroll">
+                  <ProfilePanel player={data.player} factionByCode={data.factionByCode} />
                 </div>
-                <div className="w-[340px] shrink-0">
-                  <PortDetailPanel
-                    port={selectedPort}
-                    factionByCode={data.factionByCode}
-                    onTravel={(p) => toast({ title: "Kurs gesetzt", description: `Reisen nach ${p.name} folgen im nächsten Schritt.` })}
-                  />
+              ) : active === "wiki" ? (
+                <div className="flex-1 min-w-0 overflow-y-auto thin-scroll">
+                  <WikiPanel />
                 </div>
-              </>
-            )}
-          </div>
+              ) : (
+                <>
+                  <div className="flex-1 min-w-0">
+                    <CaribbeanMap
+                      ports={ports}
+                      factionByCode={data.factionByCode}
+                      selectedPortId={selectedPort?.id}
+                      onSelectPort={setSelectedPortId}
+                    />
+                  </div>
+                  <div className="w-[340px] shrink-0">
+                    <PortDetailPanel
+                      port={selectedPort}
+                      factionByCode={data.factionByCode}
+                      onTravel={(p) => toast({ title: "Kurs gesetzt", description: `Reisen nach ${p.name} folgen im nächsten Schritt.` })}
+                    />
+                  </div>
+                </>
+              )}
+            </div>
 
-          <div className="px-3 pb-2 flex items-center justify-between gap-3">
-            <span className="font-display text-[11px] tracking-[0.18em] uppercase text-ink-dim">Schnellaktionen</span>
-            <QuickActions onAction={handleQuickAction} />
-          </div>
+            <div className="h-[196px] shrink-0 px-3 pb-2">
+              <BottomPanels player={data.player} portNameByUuid={portNameByUuid} onSelect={setActive} />
+            </div>
 
-          <div className="h-[200px] shrink-0 px-3 pb-3">
-            <BottomPanels player={data.player} portNameByUuid={portNameByUuid} />
+            <div className="shrink-0 px-3 pb-3">
+              <div className="panel rounded-sm flex items-center justify-between px-3 py-1.5">
+                <QuickActions onAction={handleQuickAction} />
+                <WorldUpdateTimer lastTickAt={data.world?.last_tick_at} />
+              </div>
+            </div>
           </div>
         </div>
       </div>

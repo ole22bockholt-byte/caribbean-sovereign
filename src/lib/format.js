@@ -13,8 +13,33 @@ export const formatCountdown = (totalSeconds) => {
 };
 
 export const ROUTE_COLORS = {
-  own: "#caa65a",
+  own: "#c8a24c",
   neutral: "#6b7280",
-  enemy: "#9b1c2e",
+  enemy: "#b23a46",
   pirate: "#1f2937",
+};
+
+// Fünfstufige Verfügbarkeits-/Level-Skala (0..100) -> deutsche Bezeichnung + Ton.
+export const LEVELS = [
+  { min: 80, label: "Sehr hoch", tone: "pos" },
+  { min: 60, label: "Hoch", tone: "pos" },
+  { min: 40, label: "Mittel", tone: "brass" },
+  { min: 20, label: "Niedrig", tone: "dim" },
+  { min: 0, label: "Sehr niedrig", tone: "neg" },
+];
+
+export const levelFor = (pct) =>
+  LEVELS.find((l) => pct >= l.min) || LEVELS[LEVELS.length - 1];
+
+// Sicherheitsstufe eines Hafens als Wort (für die Hafen-Übersicht).
+export const securityLevel = (pct) => levelFor(pct);
+
+// Ruf-Rang aus dem Einfluss abgeleitet (reine Darstellung; kein Backend-Wert).
+export const reputationRank = (influence = 0) => {
+  if (influence >= 5000) return "Legendär";
+  if (influence >= 3000) return "Respektiert";
+  if (influence >= 1500) return "Angesehen";
+  if (influence >= 600) return "Bekannt";
+  if (influence >= 150) return "Geduldet";
+  return "Unbekannt";
 };
