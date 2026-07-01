@@ -88,12 +88,14 @@ const MOCK_CONTRACTS = [
 const INITIAL_SHIPS = [
   { id: "s1", name: "Resolute", class: "Fregatte", crew: 156, status: "Im Hafen", homePortId: "port_royal" },
   { id: "s2", name: "Santa Ana", class: "Galeone", crew: 210, status: "Im Hafen", homePortId: "havana" },
+  { id: "s3", name: "Mistral", class: "Brigg", crew: 60, status: "Im Hafen", homePortId: "cap_francais" },
 ];
 
 function Harness() {
   const [active, setActive] = useState("uebersicht");
   const [selectedPortId, setSelectedPortId] = useState("kingston");
   const [selectedShipId, setSelectedShipId] = useState("s1");
+  const demoInitialized = useRef(false);
 
   const portById = useMemo(() => Object.fromEntries(PORTS.map((p) => [p.id, p])), []);
   const selectedPort = portById[selectedPortId] || PORTS[0];
@@ -142,6 +144,18 @@ function Harness() {
     startVoyage({ shipId: selectedShip.id, shipName: selectedShip.name, fromPortId: selectedShip.currentPortId, toPortId: selectedPort.id });
     toast({ title: "Segel gesetzt", description: `${selectedShip.name} nimmt Kurs auf ${selectedPort.name}.` });
   };
+
+  // Demo-Modus: automatisch Mistral von Cap-Français nach Santo Domingo schicken
+  useEffect(() => {
+    if (demoInitialized.current) return;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("demo") === "1") {
+      demoInitialized.current = true;
+      setTimeout(() => {
+        startVoyage({ shipId: "s3", shipName: "Mistral", fromPortId: "cap_francais", toPortId: "santo_domingo" });
+      }, 100);
+    }
+  }, [startVoyage]);
 
   const back = () => setActive("uebersicht");
 
