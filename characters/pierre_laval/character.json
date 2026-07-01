@@ -1,0 +1,16 @@
+{
+  "name": "Pierre Laval",
+  "category": "naval_officer",
+  "rank": "Leutnant",
+  "factionCode": "fr",
+  "experience": "Erfahren",
+  "rarity": "common",
+  "status": "wounded",
+  "skills": {
+    "Geschütz": 3,
+    "Enterkampf": 3,
+    "Disziplin": 2
+  },
+  "uniqueAbilities": [],
+  "summary": "Ein pflichtbewusster Offizier, der sich in der letzten Schlacht eine Verwundung zuzog."
+}
