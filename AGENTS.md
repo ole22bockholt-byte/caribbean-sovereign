@@ -145,3 +145,30 @@ npx skills add base44/skills
 - Prefer the existing Base44 CLI workflow over adding new npm scripts for Base44-specific tasks.
 - Reuse the existing SDK client and Vite plugin patterns before adding new Base44 integration paths.
 - Run the relevant checks from `package.json` before finishing code changes.
+
+## Cursor Cloud specific instructions
+
+Dependencies are refreshed automatically by the startup update script (`npm install`), which
+also creates `.env.local` if it is missing. The following are durable, non-obvious notes for
+running/testing this app in the cloud VM.
+
+- **Running the frontend**: `npm run dev` (Vite, http://localhost:5173). Standard scripts live
+  in `package.json` (`dev`, `build`, `lint`, `typecheck`, `preview`).
+- **Backend proxy is env-gated**: `npm run dev` only reaches the backend when
+  `VITE_BASE44_APP_BASE_URL` is set — the Base44 Vite plugin logs `Proxy enabled: /api -> …`.
+  Without it you get `Proxy not enabled` and every `/api/*` call 404s against the dev server.
+  The startup script writes a non-secret `.env.local` with
+  `VITE_BASE44_APP_ID=6a43defde92c0d47de02330a` and
+  `VITE_BASE44_APP_BASE_URL=https://app.base44.com` (hosted Base44 backend). Restart the dev
+  server after changing `.env.local`.
+- **App auth is workspace-restricted**: the hosted app (`6a43defde92c0d47de02330a`) returns
+  `auth_required` and the SPA redirects to the Base44 login (`app.base44.com/login`). Reaching
+  the actual game (onboarding, `gameState`, etc.) requires logging in with a Base44 account that
+  has access to this workspace/app — there is no local anonymous access.
+- **Full local backend** (`base44 dev`, runs the Deno functions in `base44/functions/` locally)
+  needs the global Base44 CLI (`npm install -g base44@latest`, not a project dep), a Base44
+  login, and Supabase secrets (`SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_ANON_KEY`);
+  functions return HTTP 500 `Supabase-Secrets fehlen.` when those are absent.
+- **`npm run typecheck` currently fails** on pre-existing TS errors in `.jsx` pages
+  (e.g. `src/pages/Register.jsx`, `src/pages/ResetPassword.jsx`); this is unrelated to
+  environment setup. `npm run lint` and `npm run build` pass cleanly.
