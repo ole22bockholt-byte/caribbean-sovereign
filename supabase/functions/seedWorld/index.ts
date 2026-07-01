@@ -33,17 +33,17 @@ Deno.serve(async (req) => {
     const facId: Record<string, string> = Object.fromEntries(facRows!.map((f) => [f.code, f.id]));
 
     // -------------------------------------------------------------------------
-    // 2) WAREN
+    // 2) WAREN — weight_tons = Gewicht je Einheit in Tonnen (physischer Laderaum).
     // -------------------------------------------------------------------------
     const goods = [
-      { code: "rum", name: "Rum", base_price: 40 },
-      { code: "sugar", name: "Zucker", base_price: 25 },
-      { code: "tobacco", name: "Tabak", base_price: 35 },
-      { code: "cotton", name: "Baumwolle", base_price: 30 },
-      { code: "spices", name: "Gewürze", base_price: 60 },
-      { code: "powder", name: "Schießpulver", base_price: 80 },
-      { code: "timber", name: "Bauholz", base_price: 20 },
-      { code: "coffee", name: "Kaffee", base_price: 45 },
+      { code: "rum", name: "Rum", base_price: 40, weight_tons: 1.0 },
+      { code: "sugar", name: "Zucker", base_price: 25, weight_tons: 1.0 },
+      { code: "tobacco", name: "Tabak", base_price: 35, weight_tons: 0.8 },
+      { code: "cotton", name: "Baumwolle", base_price: 30, weight_tons: 0.6 },
+      { code: "spices", name: "Gewürze", base_price: 60, weight_tons: 0.3 },
+      { code: "powder", name: "Schießpulver", base_price: 80, weight_tons: 1.2 },
+      { code: "timber", name: "Bauholz", base_price: 20, weight_tons: 1.5 },
+      { code: "coffee", name: "Kaffee", base_price: 45, weight_tons: 0.7 },
     ];
     const { error: goodsErr } = await supabase.from("goods").upsert(goods, { onConflict: "code" });
     if (goodsErr) throw new Error("Waren: " + goodsErr.message);
@@ -82,18 +82,30 @@ Deno.serve(async (req) => {
     if (actorReadErr) throw new Error("Akteure lesen: " + actorReadErr.message);
 
     // -------------------------------------------------------------------------
-    // 4) HÄFEN (9 Stück) — mit kontrollierender Fraktion + Position
+    // 4) HÄFEN — historische Karibik-Häfen um 1765 mit kontrollierender Fraktion
+    //    und realistischer Kartenposition (x/y = 0..100, deckungsgleich zu den
+    //    Landmassen in src/lib/mapGeography.js). Vgl. Migration 0006_historic_ports.
     // -------------------------------------------------------------------------
     const ports = [
-      { code: "port_royal", name: "Port Royal", x: 58, y: 46, faction: "gb", status: "fort" },
-      { code: "kingston", name: "Kingston", x: 56, y: 50, faction: "gb", status: "controllable" },
-      { code: "havana", name: "Havanna", x: 40, y: 28, faction: "es", status: "fort" },
-      { code: "santiago", name: "Santiago de Cuba", x: 50, y: 40, faction: "es", status: "controllable" },
-      { code: "cartagena", name: "Cartagena", x: 44, y: 78, faction: "es", status: "fort" },
-      { code: "tortuga", name: "Tortuga", x: 64, y: 34, faction: "pirate", status: "controllable" },
-      { code: "petit_goave", name: "Petit-Goâve", x: 62, y: 42, faction: "fr", status: "controllable" },
-      { code: "willemstad", name: "Willemstad", x: 54, y: 70, faction: "nl", status: "controllable" },
-      { code: "nassau", name: "Nassau", x: 50, y: 16, faction: "neutral", status: "neutral_zone" },
+      { code: "port_royal", name: "Port Royal", x: 42, y: 45.5, faction: "gb", status: "fort" },
+      { code: "kingston", name: "Kingston", x: 44.5, y: 46.5, faction: "gb", status: "controllable" },
+      { code: "havana", name: "Havanna", x: 24, y: 20, faction: "es", status: "fort" },
+      { code: "santiago", name: "Santiago de Cuba", x: 47, y: 34.5, faction: "es", status: "controllable" },
+      { code: "cartagena", name: "Cartagena", x: 40, y: 82, faction: "es", status: "fort" },
+      { code: "tortuga", name: "Tortuga", x: 54.5, y: 32.4, faction: "pirate", status: "controllable" },
+      { code: "petit_goave", name: "Petit-Goâve", x: 51.5, y: 45, faction: "fr", status: "controllable" },
+      { code: "willemstad", name: "Willemstad", x: 60.5, y: 73.5, faction: "nl", status: "controllable" },
+      { code: "nassau", name: "Nassau", x: 60, y: 11, faction: "neutral", status: "neutral_zone" },
+      { code: "cap_francais", name: "Cap-Français", x: 53, y: 34.6, faction: "fr", status: "fort" },
+      { code: "san_juan", name: "San Juan", x: 77, y: 39.3, faction: "es", status: "fort" },
+      { code: "santo_domingo", name: "Santo Domingo", x: 64, y: 45.5, faction: "es", status: "controllable" },
+      { code: "bridgetown", name: "Bridgetown", x: 94, y: 63, faction: "gb", status: "controllable" },
+      { code: "fort_royal", name: "Fort-Royal", x: 89.5, y: 58, faction: "fr", status: "fort" },
+      { code: "basse_terre", name: "Basse-Terre", x: 88, y: 51.5, faction: "fr", status: "controllable" },
+      { code: "oranjestad", name: "Oranjestad", x: 86, y: 45.8, faction: "nl", status: "controllable" },
+      { code: "portobelo", name: "Portobelo", x: 24, y: 79, faction: "es", status: "fort" },
+      { code: "port_of_spain", name: "Port of Spain", x: 88, y: 76, faction: "es", status: "controllable" },
+      { code: "campeche", name: "Campeche", x: 9.5, y: 25, faction: "es", status: "controllable" },
     ];
     const { error: portErr } = await supabase.from("ports").upsert(
       ports.map((p) => ({

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { Anchor, TrendingUp, TrendingDown, Minus, ArrowRight } from "lucide-react";
+import { Anchor, TrendingUp, TrendingDown, Minus, ArrowRight, Navigation2, Ship } from "lucide-react";
 import { factionFlag } from "@/lib/gameData";
-import { securityLevel, levelFor } from "@/lib/format";
+import { securityLevel, levelFor, formatCountdown } from "@/lib/format";
 import { asset } from "@/lib/assets";
 
 const HARBOR_IMG = asset("assets/harbor.png");
@@ -55,7 +55,15 @@ function resourceLevels(market) {
   });
 }
 
-export default function PortDetailPanel({ port, factionByCode, onTravel }) {
+export default function PortDetailPanel({
+  port,
+  factionByCode,
+  dockedShips = [],
+  selectedShipId,
+  onSelectShip,
+  routeInfo,
+  onStartVoyage,
+}) {
   const [tab, setTab] = useState("uebersicht");
 
   if (!port) {
@@ -201,14 +209,72 @@ export default function PortDetailPanel({ port, factionByCode, onTravel }) {
         )}
       </div>
 
-      <div className="p-3 border-t border-line">
-        <button
-          onClick={() => onTravel?.(port)}
-          className="brass-btn w-full py-2 text-sm tracking-wide"
-        >
-          <Anchor className="w-4 h-4" /> Zum Hafen wechseln <ArrowRight className="w-4 h-4" />
-        </button>
+      <TravelPlanner
+        port={port}
+        dockedShips={dockedShips}
+        selectedShipId={selectedShipId}
+        onSelectShip={onSelectShip}
+        routeInfo={routeInfo}
+        onStartVoyage={onStartVoyage}
+      />
+    </div>
+  );
+}
+
+// Reiseplaner im Fuß des Hafen-Panels: Schiff wählen, Seeweg & Fahrtzeit sehen,
+// Segel setzen. Die eigentliche Bewegung übernimmt useVoyages auf der Karte.
+function TravelPlanner({ port, dockedShips, selectedShipId, onSelectShip, routeInfo, onStartVoyage }) {
+  const selected = dockedShips.find((s) => s.id === selectedShipId) || null;
+  const alreadyHere = selected && selected.currentPortId === port.id;
+  const canSail = selected && !alreadyHere;
+
+  return (
+    <div className="p-3 border-t border-line space-y-2">
+      <div className="font-display text-[10px] tracking-[0.16em] uppercase text-brass flex items-center gap-1.5">
+        <Navigation2 className="w-3.5 h-3.5" /> Reise planen
       </div>
+
+      {dockedShips.length === 0 ? (
+        <p className="text-sm text-ink-dim font-body-game">Kein Schiff im Hafen verfügbar.</p>
+      ) : (
+        <>
+          <div className="flex items-center gap-2">
+            <Ship className="w-4 h-4 text-ink-dim shrink-0" />
+            <select
+              value={selectedShipId || ""}
+              onChange={(e) => onSelectShip?.(e.target.value)}
+              className="flex-1 bg-[var(--wood-light)] border border-line rounded-sm px-2 py-1 text-sm text-ink font-body-game focus:outline-none focus:border-brass"
+            >
+              {dockedShips.map((s) => (
+                <option key={s.id} value={s.id}>
+                  {s.name} · {s.class}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="flex items-center justify-between text-xs font-body-game text-ink-dim">
+            <span className="truncate">
+              {selected?.currentPortName || "See"} <ArrowRight className="inline w-3 h-3 -mt-px" /> {port.name}
+            </span>
+            {routeInfo && !alreadyHere && (
+              <span className="text-brass whitespace-nowrap ml-2">
+                ~{routeInfo.distanceSm} sm · {formatCountdown(routeInfo.durationSeconds)}
+              </span>
+            )}
+          </div>
+
+          <button
+            onClick={() => canSail && onStartVoyage?.()}
+            disabled={!canSail}
+            className="brass-btn w-full py-2 text-sm tracking-wide disabled:opacity-45 disabled:cursor-not-allowed"
+          >
+            <Anchor className="w-4 h-4" />
+            {alreadyHere ? "Schiff liegt bereits hier" : `Segel setzen nach ${port.name}`}
+            {canSail && <ArrowRight className="w-4 h-4" />}
+          </button>
+        </>
+      )}
     </div>
   );
 }

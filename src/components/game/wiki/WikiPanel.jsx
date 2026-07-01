@@ -1,33 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Loader2, BookOpen, Github } from "lucide-react";
-import { invokeFunction } from "@/api/supabaseClient";
+import { useWikiShips } from "@/hooks/useWikiShips";
 import ShipCard from "./ShipCard";
 import ShipDetail from "./ShipDetail";
 
 // Wiki: vorerst Schiffstypen aus GitHub. Aufgebaut als eigenständiger Bereich,
 // damit später weitere Wiki-Kategorien (Waren, Fraktionen, ...) ergänzt werden können.
 export default function WikiPanel() {
-  const [ships, setShips] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [notice, setNotice] = useState(null);
+  const { ships, loading, notice } = useWikiShips();
   const [selected, setSelected] = useState(null);
-
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      try {
-        const res = await invokeFunction("wikiShips");
-        if (cancelled) return;
-        setShips(res?.ships || []);
-        if (res?.configured === false || res?.message) setNotice(res.message);
-      } catch (e) {
-        if (!cancelled) setNotice("Wiki-Daten konnten nicht geladen werden.");
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    })();
-    return () => { cancelled = true; };
-  }, []);
 
   if (loading) {
     return (

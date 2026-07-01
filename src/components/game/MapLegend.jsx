@@ -1,13 +1,14 @@
 import React from "react";
 import { ROUTE_COLORS } from "@/lib/format";
 
+// Legende passend zu den tatsächlich gezeichneten Kartenelementen.
 const ITEMS = [
-  { label: "Eigene Schiffe", swatch: "var(--pos)", shape: "dot" },
-  { label: "Verbündete", swatch: "var(--pos)", shape: "ring" },
-  { label: "Feindlich", swatch: "var(--blood)", shape: "dot" },
-  { label: "Neutrale", swatch: "#6b7280", shape: "dot" },
-  { label: "Handelsrouten", swatch: ROUTE_COLORS.own, shape: "dash" },
-  { label: "Seerouten", swatch: "var(--ink-dim)", shape: "line" },
+  { label: "Fort", swatch: "var(--brass)", shape: "ring" },
+  { label: "Handelshafen", swatch: "var(--ink-dim)", shape: "ring" },
+  { label: "Freibeuternest", swatch: "var(--blood)", shape: "ring" },
+  { label: "Freier Hafen", swatch: "var(--pos)", shape: "ring" },
+  { label: "Eigenes Schiff", swatch: "var(--brass-bright)", shape: "dot" },
+  { label: "Seeweg", swatch: ROUTE_COLORS.own, shape: "dash" },
 ];
 
 export default function MapLegend() {
@@ -16,17 +17,9 @@ export default function MapLegend() {
       {ITEMS.map((it) => (
         <div key={it.label} className="flex items-center gap-2">
           {it.shape === "dash" ? (
-            <span
-              className="w-5 h-0"
-              style={{ borderTop: `2px dashed ${it.swatch}` }}
-            />
-          ) : it.shape === "line" ? (
-            <span className="w-5 h-0.5 rounded" style={{ backgroundColor: it.swatch }} />
+            <span className="w-5 h-0" style={{ borderTop: `2px dashed ${it.swatch}` }} />
           ) : it.shape === "ring" ? (
-            <span
-              className="w-2.5 h-2.5 rounded-full border-2"
-              style={{ borderColor: it.swatch }}
-            />
+            <span className="w-2.5 h-2.5 rounded-full border-2" style={{ borderColor: it.swatch }} />
           ) : (
             <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: it.swatch }} />
           )}

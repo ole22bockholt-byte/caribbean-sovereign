@@ -15,7 +15,7 @@ import Game from '@/pages/Game';
 // Add page imports here
 
 const AuthenticatedApp = () => {
-  const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
+  const { isLoadingAuth, isLoadingPublicSettings, authError } = useAuth();
 
   // Show loading spinner while checking app public settings or auth
   if (isLoadingPublicSettings || isLoadingAuth) {
@@ -26,15 +26,12 @@ const AuthenticatedApp = () => {
     );
   }
 
-  // Handle authentication errors
-  if (authError) {
-    if (authError.type === 'user_not_registered') {
-      return <UserNotRegisteredError />;
-    } else if (authError.type === 'auth_required') {
-      // Redirect to login automatically
-      navigateToLogin();
-      return null;
-    }
+  // Auth-Fehler behandeln. In der Supabase-Welt gibt es keine gehostete SSO-
+  // Weiterleitung mehr: Unauthentifizierte werden über den ProtectedRoute auf die
+  // App-eigene /login-Seite geführt. Nur der (theoretische) "user_not_registered"-
+  // Fall zeigt den klaren "Zugriff eingeschränkt"-Hinweis.
+  if (authError && authError.type === 'user_not_registered') {
+    return <UserNotRegisteredError />;
   }
 
   // Render the main app

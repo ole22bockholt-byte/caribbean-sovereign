@@ -22,6 +22,7 @@ export const DUMMY_RESOLUTE = {
   crew: 156,
   status: "Im Hafen",
   locationPortUuid: null,
+  cargoCapacity: 120,
   isDummy: true,
   // Reiche Detailwerte für die Schiffsansicht (Platzhalter bis Backend-Anbindung).
   detail: {
