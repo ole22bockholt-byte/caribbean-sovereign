@@ -24,8 +24,8 @@ const NAV = [
 
 export default function Sidebar({ active, onSelect }) {
   return (
-    <aside className="w-56 shrink-0 bg-wood-deep border-r border-line flex flex-col">
-      <div className="px-4 py-5 border-b border-line">
+    <aside className="w-56 shrink-0 nav-ground nav-line-r flex flex-col">
+      <div className="px-4 py-5 nav-line-b">
         <div className="font-display text-brass-bright text-lg tracking-[0.14em] leading-tight">KARIBIK</div>
         <div className="font-display text-ink-dim text-xs tracking-[0.32em]">ANNO 1765</div>
         <div className="brass-rule mt-3" />
@@ -50,7 +50,7 @@ export default function Sidebar({ active, onSelect }) {
           );
         })}
       </nav>
-      <div className="px-4 py-3 border-t border-line text-[10px] text-ink-dim font-body-game tracking-widest text-center">
+      <div className="px-4 py-3 nav-line-t text-[10px] text-ink-dim font-body-game tracking-widest text-center">
         ADMIRALITÄTSKARTE · v0.1
       </div>
     </aside>

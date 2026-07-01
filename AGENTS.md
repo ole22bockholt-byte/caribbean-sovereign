@@ -34,6 +34,12 @@ Mehrspieler-Weltsystem — eine gemeinsame Welt entwickelt sich über die Zeit w
   PNG-Grafik) nutzen die Klasse `.picture-ground` (`--tex-pictureground`). Neue Bild-Flächen
   immer `.picture-ground`, neue Panels immer `.panel` verwenden — Texturen nur zentral in
   `src/index.css` tauschen.
+- **Navigationsleisten-Texturen**: Zwei weitere zentrale CSS-Variablen — `--tex-navground`
+  (`outliner.png`, Hintergrund von linker `Sidebar` + oberer `StatusBar` via Klasse
+  `.nav-ground`) und `--tex-navline` (`outline.png`, Messing-Trennlinien der Navigation).
+  Trennlinien über die Kanten-Klassen `.nav-line-r` (rechts, Sidebar), `.nav-line-b` (unten,
+  Sidebar-Kopf + StatusBar) und `.nav-line-t` (oben, Sidebar-Fuß) als `border-image`.
+  Neue Navigations-Flächen `.nav-ground`, neue Nav-Trennlinien die `.nav-line-*`-Klassen.
 
 ### Architektur (Quelle der Wahrheit)
 - **Frontend**: React + Tailwind + shadcn/ui. Hauptseite `src/pages/Game.jsx` (Route `/`),

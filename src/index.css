@@ -21,6 +21,8 @@
   --tex-outline: url('https://media.base44.com/images/public/6a43defde92c0d47de02330a/434f9e695_outline.png');
   --tex-background: url('https://media.base44.com/images/public/6a43defde92c0d47de02330a/5b637d69e_background.png');
   --tex-pictureground: url('https://media.base44.com/images/public/6a43defde92c0d47de02330a/82f85f195_pictureground.png');
+  --tex-navground: url('https://media.base44.com/images/public/6a43defde92c0d47de02330a/d6d1ed0a6_outliner.png');
+  --tex-navline: url('https://media.base44.com/images/public/6a43defde92c0d47de02330a/edb112d7b_outline.png');
   --outline-width: 6px;      /* Breite der Messing-Outline */
 }
 
@@ -64,6 +66,19 @@
   background-size: cover;
   background-position: center;
 }
+
+/* Navigationsleisten (links + oben): eigene Textur (outliner.png) als Hintergrund */
+.nav-ground {
+  background-color: var(--wood-deep);
+  background-image: var(--tex-navground);
+  background-size: cover;
+  background-position: center;
+}
+
+/* Messing-Trennlinien der Navigation (outline.png) — als border-image je Kante */
+.nav-line-r { border-right: 4px solid var(--line); border-image: var(--tex-navline) 30 round; border-image-width: 0 4px 0 0; }
+.nav-line-b { border-bottom: 4px solid var(--line); border-image: var(--tex-navline) 30 round; border-image-width: 0 0 4px 0; }
+.nav-line-t { border-top: 4px solid var(--line); border-image: var(--tex-navline) 30 round; border-image-width: 4px 0 0 0; }
 
 /* Brass double rule used under section titles */
 .brass-rule {

@@ -21,7 +21,7 @@ export default function StatusBar({ player, world, factionByCode }) {
   const faction = factionByCode?.[player?.factionCode];
 
   return (
-    <header className="bg-wood-deep border-b border-line flex items-stretch divide-x divide-[var(--line)]">
+    <header className="nav-ground nav-line-b flex items-stretch divide-x divide-[var(--line)]">
       <div className="flex items-center gap-2.5 px-4 py-2">
         <span className="text-xl" title={faction?.name}>{factionFlag(player?.factionCode)}</span>
         <div className="leading-tight">
