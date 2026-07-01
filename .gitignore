@@ -30,3 +30,6 @@ dist-ssr
 
 .env
 .vite
+
+# Supabase CLI local artifacts (contains project/pooler info)
+supabase/.temp

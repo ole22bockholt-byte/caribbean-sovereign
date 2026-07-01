@@ -4,7 +4,7 @@
 # (Dashboard > Project Settings > General > Reference ID, z. B. "abcdefghijklmnopqrst").
 # Wird von der CLI (`supabase link`/`db push`/`functions deploy`) und der
 # Supabase-GitHub-Integration (Branching/Auto-Deploy) genutzt.
-project_id = "DEIN-PROJECT-REF"
+project_id = "eoqympwpltuhbiiesbky"
 
 # ---------------------------------------------------------------------------
 # Edge Functions — alle sechs Functions verlangen einen eingeloggten User
