@@ -13,8 +13,8 @@ const GRID = 100; // Zellen je Achse (Zellgröße = 1 Einheit)
 
 // Reisedauer aus der Weglänge (Einheiten). Client-seitige Taktung, damit die
 // Bewegung sichtbar ist: kurze Sprünge ~einige Sekunden, Querungen ~1 Minute.
-const MS_PER_UNIT = 780;
-const MIN_MS = 5000;
+const MS_PER_UNIT = 520;
+const MIN_MS = 4000;
 export function estimateDurationMs(length) {
   return Math.max(MIN_MS, Math.round(length * MS_PER_UNIT));
 }

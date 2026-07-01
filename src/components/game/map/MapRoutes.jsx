@@ -18,16 +18,27 @@ export default function MapRoutes({ sailing = [], planned = null }) {
     >
       {/* Geplante Route (Vorschau) */}
       {planned?.points?.length > 1 && (
-        <polyline
-          points={toPolyline(planned.points)}
-          fill="none"
-          stroke="var(--brass-bright)"
-          strokeWidth="1"
-          strokeOpacity="0.6"
-          strokeDasharray="1.6 1.6"
-          strokeLinecap="round"
-          vectorEffect="non-scaling-stroke"
-        />
+        <>
+          <polyline
+            points={toPolyline(planned.points)}
+            fill="none"
+            stroke="var(--brass-bright)"
+            strokeWidth="2.6"
+            strokeOpacity="0.18"
+            strokeLinecap="round"
+            vectorEffect="non-scaling-stroke"
+          />
+          <polyline
+            points={toPolyline(planned.points)}
+            fill="none"
+            stroke="var(--brass-bright)"
+            strokeWidth="1.4"
+            strokeOpacity="0.95"
+            strokeDasharray="2.2 1.8"
+            strokeLinecap="round"
+            vectorEffect="non-scaling-stroke"
+          />
+        </>
       )}
 
       {/* Laufende Reisen */}
