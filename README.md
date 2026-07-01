@@ -1,77 +1,108 @@
-# Base44 Project
+# Karibik 1765
 
-Use this repository to run and edit the app locally, then publish changes back through Base44.
+Browserbasiertes, nautisches Handels- und Strategiespiel (Karibik um 1765).
+Frontend: **React + Vite + Tailwind**. Backend: **Supabase** (Auth + Postgres +
+Edge Functions). Hosting: **GitHub Pages** über GitHub Actions.
 
-Any change pushed to the repo will also be reflected in the Base44 Builder.
+Die App lief früher über die Base44-Plattform. Sie ist jetzt vollständig davon
+gelöst und läuft autonom über GitHub + Supabase.
 
-## Prerequisites
+## Architektur
 
-1. Clone the repository using the project's Git URL.
-2. Navigate to the project directory.
-3. Install dependencies: `npm install`.
-4. Install the Base44 CLI: `npm install -g base44@latest`.
+| Bereich        | Vorher (Base44)                        | Jetzt                                   |
+| -------------- | -------------------------------------- | --------------------------------------- |
+| Auth           | `@base44/sdk` (Base44-Login)           | Supabase Auth (`@supabase/supabase-js`) |
+| Backend-Logik  | Base44 Functions (`base44/functions/`) | Supabase Edge Functions (`supabase/functions/`) |
+| Datenbank      | Supabase (via Base44-Secrets)          | Supabase (unverändert, `supabase/migrations/`) |
+| Datenzugriff   | nur über Functions                     | nur über Functions (RLS sperrt Direktzugriff) |
+| Hosting        | Base44-Publish                         | GitHub Pages (`.github/workflows/deploy.yml`) |
+| Bilder/Assets  | `media.base44.com`                     | im Repo unter `public/assets/`          |
 
-See the [Base44 CLI docs](https://docs.base44.com/developers/references/cli/get-started/overview) if you want to run Base44 commands directly.
+## Voraussetzungen
 
-## Run Locally
+- Node.js 20+ (getestet mit 22) und npm
+- Ein Supabase-Projekt (kostenloser Tier genügt zum Start)
+- Optional für Deploy: aktivierte GitHub Pages im Repository
 
-Run the full local development environment from the project root:
-
-```bash
-base44 dev
-```
-
-`base44 dev` starts the local Base44 development backend and, when this app is configured for it, also starts the frontend dev server for you. Use the frontend URL printed by the command.
-
-For example, when the Base44 project config includes a `serveCommand`, `base44 dev` can launch the frontend too:
-
-```json5
-{
-  "site": {
-    "serveCommand": "npm run dev"
-  }
-}
-```
-
-In a Base44 project this lives in `base44/config.jsonc`.
-
-## Run Only The Frontend
-
-If you only want to work on the frontend against the hosted Base44 backend, run:
+## Lokale Entwicklung
 
 ```bash
-npm run dev
+npm install
+cp .env.example .env.local   # Werte deines Supabase-Projekts eintragen
+npm run dev                  # Vite auf http://localhost:5173
 ```
 
-Open the local URL printed by Vite.
+`.env.local` (öffentliche Werte, kein Secret):
 
-## Use The Hosted Backend
+```
+VITE_SUPABASE_URL=https://DEIN-PROJEKT.supabase.co
+VITE_SUPABASE_ANON_KEY=dein-anon-key
+```
 
-For frontend-only development, create or update `.env.local` in the project root:
+Beide Werte stehen im Supabase-Dashboard unter **Project Settings > API**.
+
+## Supabase einrichten (einmalig)
+
+1. **Projekt anlegen** auf [supabase.com](https://supabase.com).
+2. **Datenbank-Schema** anwenden — die Migrationen aus `supabase/migrations/` der
+   Reihe nach im **SQL-Editor** ausführen (0001 → 0005) oder per CLI:
+   ```bash
+   npm install -g supabase
+   supabase link --project-ref DEIN-PROJECT-REF
+   supabase db push
+   ```
+   Migration `0005_enable_rls.sql` aktiviert Row Level Security: Der öffentliche
+   anon-Key kann **nicht** direkt auf die Spieltabellen zugreifen — der gesamte
+   Zugriff läuft über die Edge Functions (Service-Role).
+3. **Edge Functions deployen**:
+   ```bash
+   supabase functions deploy gameState createPlayer wikiShips worldState seedWorld tickWorld
+   ```
+   `SUPABASE_URL`, `SUPABASE_ANON_KEY` und `SUPABASE_SERVICE_ROLE_KEY` werden von
+   Supabase automatisch in die Functions injiziert — nichts weiter nötig.
+   Optional für das Wiki: `supabase secrets set GITHUB_TOKEN=... WIKI_REPO=owner/repo`
+   (nur für private Repos oder höhere GitHub-Rate-Limits).
+4. **Auth aktivieren**: unter **Authentication > Providers** E-Mail (und optional
+   Google) einschalten. Für den 6-stelligen Code beim Registrieren im
+   E-Mail-Template „Confirm signup“ `{{ .Token }}` verwenden; alternativ genügt der
+   Bestätigungslink. Redirect-URLs (App-URL + `.../reset-password`) unter
+   **Authentication > URL Configuration** eintragen.
+5. **Welt initialisieren**: einen User zum Admin machen und `seedWorld` aufrufen.
+   Admin-Rolle setzen (SQL-Editor):
+   ```sql
+   update auth.users
+      set raw_app_meta_data = raw_app_meta_data || '{"role":"admin"}'
+    where email = 'deine@mail.example';
+   ```
+   Danach als dieser User in der App einloggen und `seedWorld` einmalig ausführen
+   (z. B. per `supabase.functions.invoke('seedWorld')` in der Browser-Konsole).
+6. **Welt-Tick automatisieren** (optional): `supabase/optional_world_tick_cron.sql`
+   einmalig im SQL-Editor ausführen (nutzt `pg_cron`, ruft `world_tick()` planmäßig
+   auf). Alternativ manuell/geplant die Function `tickWorld` als Admin aufrufen.
+
+## Deploy auf GitHub Pages
+
+1. Im Repository unter **Settings > Pages** als Quelle **GitHub Actions** wählen.
+2. Unter **Settings > Secrets and variables > Actions** die Build-Secrets anlegen:
+   - `VITE_SUPABASE_URL`
+   - `VITE_SUPABASE_ANON_KEY`
+3. Push auf `main` — der Workflow `.github/workflows/deploy.yml` baut die App und
+   veröffentlicht sie. Projekt-Seiten laufen unter `https://<user>.github.io/<repo>/`;
+   der Basis-Pfad wird automatisch gesetzt. Für eine eigene Domain `VITE_BASE_PATH`
+   im Workflow entfernen/anpassen.
+
+## Checks
 
 ```bash
-VITE_BASE44_APP_ID=your_app_id
-VITE_BASE44_APP_BASE_URL=https://your-app.base44.app
+npm run lint       # ESLint (verpflichtend, läuft sauber)
+npm run build      # Produktions-Build
+npm run typecheck  # tsc (vorbestehende Typwarnungen in .jsx-Auth-Seiten, kein Gate)
 ```
 
-`VITE_BASE44_APP_ID` identifies the Base44 app.
+## Wichtige Dateien
 
-`VITE_BASE44_APP_BASE_URL` tells the Base44 Vite plugin where to send local `/api` requests. Point it at your deployed Base44 app URL when you want the local frontend to use the hosted backend.
-
-When you use `base44 dev`, the command injects the local Base44 values for you, so `.env.local` is mainly needed for frontend-only workflows.
-
-## Publish Your Changes
-
-After pushing your changes to git, open the Base44 dashboard and publish the app:
-
-```bash
-base44 dashboard open
-```
-
-## Docs & Support
-
-Documentation: [https://docs.base44.com/Integrations/Using-GitHub](https://docs.base44.com/Integrations/Using-GitHub)
-
-Base44 CLI command reference: [https://docs.base44.com/developers/references/cli/commands/introduction](https://docs.base44.com/developers/references/cli/commands/introduction)
-
-Support: [https://app.base44.com/support](https://app.base44.com/support)
+- `src/api/supabaseClient.js` — Supabase-Client + `invokeFunction()`-Helfer.
+- `src/lib/AuthContext.jsx` — Auth-Status über Supabase Auth.
+- `supabase/functions/` — Backend-Logik (Edge Functions, Deno).
+- `supabase/migrations/` — Datenbankschema.
+- `.github/workflows/deploy.yml` — Build & Deploy auf GitHub Pages.

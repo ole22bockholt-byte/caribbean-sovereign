@@ -65,8 +65,9 @@ Details, alle Felder und Beispiele stehen in den drei verlinkten README-Dateien.
 
 ## Hinweis zum Wiki
 
-Das In-Game-Wiki lädt Schiffsdaten über die Backend-Funktion
-`base44/functions/wikiShips/entry.ts` aus einem GitHub-Repo. Dort müssen `REPO`/`BRANCH`/
-`SHIPS_DIR` konfiguriert sein (Standard `REPO = "OWNER/REPO"` ist ein Platzhalter — solange
-er gesetzt ist, bleibt das Wiki leer). Die Katalogdateien in diesem Repo sind die Quelle;
-das Wiki ist die read-only Anzeige davon.
+Das In-Game-Wiki lädt Schiffsdaten über die Supabase Edge Function
+`supabase/functions/wikiShips/index.ts` aus einem GitHub-Repo. Repo/Branch/Verzeichnis
+sind über die Defaults oben in der Function bzw. die Function-Secrets `WIKI_REPO`/
+`WIKI_BRANCH`/`WIKI_SHIPS_DIR` konfigurierbar (optionales `GITHUB_TOKEN` für private Repos
+oder höhere Rate-Limits). Die Katalogdateien in diesem Repo sind die Quelle; das Wiki ist
+die read-only Anzeige davon.
