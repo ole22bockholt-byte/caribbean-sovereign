@@ -4,6 +4,7 @@ import { queryClientInstance } from '@/lib/query-client'
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
+import { appParams } from '@/lib/app-params';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import ScrollToTop from './components/ScrollToTop';
 import ProtectedRoute from '@/components/ProtectedRoute';
@@ -15,7 +16,7 @@ import Game from '@/pages/Game';
 // Add page imports here
 
 const AuthenticatedApp = () => {
-  const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
+  const { isLoadingAuth, isLoadingPublicSettings, authError } = useAuth();
 
   // Show loading spinner while checking app public settings or auth
   if (isLoadingPublicSettings || isLoadingAuth) {
@@ -30,11 +31,16 @@ const AuthenticatedApp = () => {
   if (authError) {
     if (authError.type === 'user_not_registered') {
       return <UserNotRegisteredError />;
-    } else if (authError.type === 'auth_required') {
-      // Redirect to login automatically
-      navigateToLogin();
-      return null;
     }
+    // Wenn ein Token vorliegt, der Zugriff aber weiterhin verweigert wird, NICHT
+    // erneut zur (gehosteten) Anmeldung weiterleiten – das erzeugte sonst eine
+    // Endlosschleife (Login -> Rücksprung -> auth_required -> Login ...).
+    // Stattdessen den klaren "Zugriff eingeschränkt"-Hinweis zeigen.
+    if (authError.type === 'auth_required' && appParams.token) {
+      return <UserNotRegisteredError />;
+    }
+    // Ohne Token normal weiterrendern: die App-eigene /login-Seite wird über den
+    // ProtectedRoute erreicht, statt automatisch zur gehosteten SSO zu springen.
   }
 
   // Render the main app
