@@ -1,0 +1,36 @@
+# Supabase-Projektkonfiguration.
+#
+# WICHTIG: `project_id` auf den Ref deines Supabase-Projekts setzen
+# (Dashboard > Project Settings > General > Reference ID, z. B. "abcdefghijklmnopqrst").
+# Wird von der CLI (`supabase link`/`db push`/`functions deploy`) und der
+# Supabase-GitHub-Integration (Branching/Auto-Deploy) genutzt.
+project_id = "DEIN-PROJECT-REF"
+
+# ---------------------------------------------------------------------------
+# Edge Functions — alle sechs Functions verlangen einen eingeloggten User
+# (Auth-Prüfung via getUser); daher verify_jwt = true (Gateway lehnt anonyme
+# Aufrufe ab). Der Ordnername muss dem Schlüssel entsprechen.
+# ---------------------------------------------------------------------------
+[functions.gameState]
+enabled = true
+verify_jwt = true
+
+[functions.createPlayer]
+enabled = true
+verify_jwt = true
+
+[functions.worldState]
+enabled = true
+verify_jwt = true
+
+[functions.wikiShips]
+enabled = true
+verify_jwt = true
+
+[functions.seedWorld]
+enabled = true
+verify_jwt = true
+
+[functions.tickWorld]
+enabled = true
+verify_jwt = true
