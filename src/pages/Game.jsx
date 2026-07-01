@@ -25,6 +25,7 @@ import AuftraegePanel from "@/components/game/port/AuftraegePanel";
 import { useGameState } from "@/hooks/useGameState";
 import { useEconomy } from "@/hooks/useEconomy";
 import { availableServices, serviceAvailability, SERVICE_IDS } from "@/lib/portServices";
+import { cargoWeight } from "@/lib/goodsData";
 
 const PARCHMENT = "https://media.base44.com/images/public/6a43defde92c0d47de02330a/ebfe1567b_generated_image.png";
 
@@ -76,9 +77,11 @@ export default function Game() {
         status: ov ? ov.status : s.status,
         currentPortId,
         locationName: currentPortId ? portById[currentPortId]?.name : "Auf See",
+        cargoCapacity: s.cargoCapacity || 0,
+        cargoUsed: cargoWeight(economy.holds[s.id]),
       };
     });
-  }, [data, portByUuid, portById, shipOverrides]);
+  }, [data, portByUuid, portById, shipOverrides, economy.holds]);
 
   const dockedShips = useMemo(
     () =>
@@ -90,8 +93,15 @@ export default function Game() {
           class: s.class,
           currentPortId: s.currentPortId,
           currentPortName: portById[s.currentPortId]?.name || "See",
+          cargoCapacity: s.cargoCapacity || 0,
         })),
     [ships, portById]
+  );
+
+  // Schiffe, die im aktuell gewählten Hafen liegen (für den Warenumschlag).
+  const shipsAtSelectedPort = useMemo(
+    () => dockedShips.filter((s) => s.currentPortId === selectedPort?.id).map((s) => ({ id: s.id, name: s.name, cargoCapacity: s.cargoCapacity })),
+    [dockedShips, selectedPort]
   );
 
   const shipPortIds = useMemo(
@@ -209,7 +219,7 @@ export default function Game() {
               ) : activeService ? (
                 <div className="flex-1 min-w-0">
                   {activeService === "handel" && (
-                    <HaendlerPanel port={selectedPort} factionByCode={data.factionByCode} economy={economy} onBack={() => setActive("uebersicht")} />
+                    <HaendlerPanel port={selectedPort} factionByCode={data.factionByCode} economy={economy} shipsAtPort={shipsAtSelectedPort} onBack={() => setActive("uebersicht")} />
                   )}
                   {activeService === "marktplatz" && (
                     <MarktplatzPanel port={selectedPort} factionByCode={data.factionByCode} player={data.player} onBack={() => setActive("uebersicht")} />

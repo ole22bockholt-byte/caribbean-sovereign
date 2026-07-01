@@ -1,6 +1,7 @@
 import React from "react";
 import { Ship, Navigation, ScrollText, Mail } from "lucide-react";
 import { formatCountdown } from "@/lib/format";
+import { formatTons } from "@/lib/goodsData";
 
 // Gemeinsame Hülle: Kopf mit Titel/Anzahl, scrollbarer Inhalt, Fußzeile mit Aktion.
 function PanelShell({ title, icon: Icon, count, footer, onFooter, children }) {
@@ -54,6 +55,7 @@ export default function BottomPanels({ ships = [], voyages = [], onSelect }) {
                 <th>Typ</th>
                 <th>Standort</th>
                 <th>Status</th>
+                <th className="!text-right">Laderaum</th>
                 <th className="!text-right">Crew</th>
               </tr>
             </thead>
@@ -64,6 +66,9 @@ export default function BottomPanels({ ships = [], voyages = [], onSelect }) {
                   <td className="text-ink-dim">{s.class}</td>
                   <td className="text-ink-dim">{s.locationName || "Auf See"}</td>
                   <td className={statusColor(s.status)}>{s.status}</td>
+                  <td className="text-right text-ink-dim">
+                    {s.cargoCapacity ? `${formatTons(s.cargoUsed || 0)} / ${formatTons(s.cargoCapacity)}` : "—"}
+                  </td>
                   <td className="text-right">{s.crew}</td>
                 </tr>
               ))}

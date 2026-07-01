@@ -29,6 +29,7 @@ import { availableServices, serviceAvailability, SERVICE_IDS } from "@/lib/portS
 import { useVoyages } from "@/hooks/useVoyages";
 import { useEconomy } from "@/hooks/useEconomy";
 import { formatGold } from "@/lib/format";
+import { cargoWeight, formatTons } from "@/lib/goodsData";
 
 if (typeof location !== "undefined" && location.search.includes("reset")) {
   try {
@@ -86,9 +87,9 @@ const MOCK_CONTRACTS = [
 ];
 
 const INITIAL_SHIPS = [
-  { id: "s1", name: "Resolute", class: "Fregatte", crew: 156, status: "Im Hafen", homePortId: "port_royal" },
-  { id: "s2", name: "Santa Ana", class: "Galeone", crew: 210, status: "Im Hafen", homePortId: "havana" },
-  { id: "s3", name: "Mistral", class: "Brigg", crew: 60, status: "Im Hafen", homePortId: "cap_francais" },
+  { id: "s1", name: "Resolute", class: "Fregatte", crew: 156, status: "Im Hafen", homePortId: "port_royal", cargoCapacity: 110 },
+  { id: "s2", name: "Santa Ana", class: "Galeone", crew: 210, status: "Im Hafen", homePortId: "port_royal", cargoCapacity: 200 },
+  { id: "s3", name: "Mistral", class: "Brigg", crew: 60, status: "Im Hafen", homePortId: "cap_francais", cargoCapacity: 70 },
 ];
 
 function Harness() {
@@ -112,14 +113,18 @@ function Harness() {
       INITIAL_SHIPS.map((s) => {
         const ov = shipOverrides[s.id];
         const currentPortId = ov ? ov.currentPortId : s.homePortId;
-        return { ...s, status: ov ? ov.status : s.status, currentPortId, locationName: currentPortId ? portById[currentPortId]?.name : "Auf See" };
+        return { ...s, status: ov ? ov.status : s.status, currentPortId, locationName: currentPortId ? portById[currentPortId]?.name : "Auf See", cargoUsed: cargoWeight(economy.holds[s.id]) };
       }),
-    [shipOverrides, portById]
+    [shipOverrides, portById, economy.holds]
   );
 
   const dockedShips = ships
     .filter((s) => s.status === "Im Hafen" && s.currentPortId)
-    .map((s) => ({ id: s.id, name: s.name, class: s.class, currentPortId: s.currentPortId, currentPortName: portById[s.currentPortId]?.name }));
+    .map((s) => ({ id: s.id, name: s.name, class: s.class, currentPortId: s.currentPortId, currentPortName: portById[s.currentPortId]?.name, cargoCapacity: s.cargoCapacity }));
+
+  const shipsAtSelectedPort = dockedShips
+    .filter((s) => s.currentPortId === selectedPort.id)
+    .map((s) => ({ id: s.id, name: s.name, cargoCapacity: s.cargoCapacity }));
 
   const shipPortIds = ships.filter((s) => s.status === "Im Hafen" && s.currentPortId).map((s) => s.currentPortId);
 
@@ -163,7 +168,7 @@ function Harness() {
     if (active === "diplomatie") {
       return <div className="flex-1 min-w-0 overflow-y-auto thin-scroll"><DiplomatiePanel factions={Object.values(FACTIONS)} player={PLAYER} /></div>;
     }
-    if (activeService === "handel") return <div className="flex-1 min-w-0"><HaendlerPanel port={selectedPort} factionByCode={FACTIONS} economy={economy} onBack={back} /></div>;
+    if (activeService === "handel") return <div className="flex-1 min-w-0"><HaendlerPanel port={selectedPort} factionByCode={FACTIONS} economy={economy} shipsAtPort={shipsAtSelectedPort} onBack={back} /></div>;
     if (activeService === "marktplatz") return <div className="flex-1 min-w-0"><MarktplatzPanel port={selectedPort} factionByCode={FACTIONS} player={PLAYER} onBack={back} /></div>;
     if (activeService === "schiffshaendler") return <div className="flex-1 min-w-0"><SchiffshaendlerPanel port={selectedPort} factionByCode={FACTIONS} economy={economy} ships={MOCK_SHIPS} onBack={back} /></div>;
     if (activeService === "ausruestung") return <div className="flex-1 min-w-0"><AusruestungPanel port={selectedPort} factionByCode={FACTIONS} economy={economy} equipment={MOCK_EQUIPMENT} onBack={back} /></div>;
@@ -187,7 +192,7 @@ function Harness() {
         <span className="font-display text-brass-bright tracking-wide">Karibik 1765 · Dev-Vorschau</span>
         <div className="flex items-center gap-4">
           <span className="inline-flex items-center gap-1.5 text-brass-bright font-display text-sm"><Coins className="w-4 h-4" /> {formatGold(economy.effectiveGold)} G</span>
-          <span className="inline-flex items-center gap-1.5 text-ink-dim font-body-game text-sm"><Package className="w-4 h-4" /> {economy.cargoUsed} Ladung</span>
+          <span className="inline-flex items-center gap-1.5 text-ink-dim font-body-game text-sm"><Package className="w-4 h-4" /> {formatTons(economy.totalWeight)} Ladung</span>
         </div>
       </div>
 

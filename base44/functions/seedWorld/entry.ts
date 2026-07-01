@@ -47,15 +47,16 @@ Deno.serve(async (req) => {
     // -------------------------------------------------------------------------
     // 2) WAREN
     // -------------------------------------------------------------------------
+    // weight_tons = Gewicht je Einheit in Tonnen (physischer Laderaum).
     const goods = [
-      { code: 'rum', name: 'Rum', base_price: 40 },
-      { code: 'sugar', name: 'Zucker', base_price: 25 },
-      { code: 'tobacco', name: 'Tabak', base_price: 35 },
-      { code: 'cotton', name: 'Baumwolle', base_price: 30 },
-      { code: 'spices', name: 'Gewürze', base_price: 60 },
-      { code: 'powder', name: 'Schießpulver', base_price: 80 },
-      { code: 'timber', name: 'Bauholz', base_price: 20 },
-      { code: 'coffee', name: 'Kaffee', base_price: 45 },
+      { code: 'rum', name: 'Rum', base_price: 40, weight_tons: 1.0 },
+      { code: 'sugar', name: 'Zucker', base_price: 25, weight_tons: 1.0 },
+      { code: 'tobacco', name: 'Tabak', base_price: 35, weight_tons: 0.8 },
+      { code: 'cotton', name: 'Baumwolle', base_price: 30, weight_tons: 0.6 },
+      { code: 'spices', name: 'Gewürze', base_price: 60, weight_tons: 0.3 },
+      { code: 'powder', name: 'Schießpulver', base_price: 80, weight_tons: 1.2 },
+      { code: 'timber', name: 'Bauholz', base_price: 20, weight_tons: 1.5 },
+      { code: 'coffee', name: 'Kaffee', base_price: 45, weight_tons: 0.7 },
     ];
     const { error: goodsErr } = await supabase
       .from('goods')

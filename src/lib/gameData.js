@@ -125,6 +125,7 @@ export function transformGameState(raw) {
           crew: s.crew,
           status: SHIP_STATE_LABEL[s.state] || s.state,
           locationPortUuid: s.location_port,
+          cargoCapacity: Number.isFinite(s.cargo_capacity) ? s.cargo_capacity : 0,
         })),
       }
     : null;
