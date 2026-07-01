@@ -175,6 +175,7 @@ npx skills add base44/skills
 - Prefer the existing Base44 CLI workflow over adding new npm scripts for Base44-specific tasks.
 - Reuse the existing SDK client and Vite plugin patterns before adding new Base44 integration paths.
 - Run the relevant checks from `package.json` before finishing code changes.
+- File-based content catalogs (`ships/`, `equipment/`, `characters/`) follow a fixed schema documented in [`docs/inhalte-hinzufuegen.md`](docs/inhalte-hinzufuegen.md). After editing any of them, run `npm run validate:content` (schema + cross-reference check). Ship slots gate fit by `allowedWeights` (severity) with optional `allowedTiers` (F–S); the item `class` tag is `<Schweregrad>-<Stufe>`.
 
 ## Cursor Cloud specific instructions
 
