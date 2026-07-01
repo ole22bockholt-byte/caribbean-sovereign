@@ -16,10 +16,15 @@ import StartScreen from "@/components/game/StartScreen";
 import QuickActions from "@/components/game/QuickActions";
 import WorldUpdateTimer from "@/components/game/WorldUpdateTimer";
 import Onboarding from "@/components/game/Onboarding";
-import TradeModal from "@/components/game/modals/TradeModal";
-import BuildShipModal from "@/components/game/modals/BuildShipModal";
-import CreateContractModal from "@/components/game/modals/CreateContractModal";
+import DiplomatiePanel from "@/components/game/DiplomatiePanel";
+import HaendlerPanel from "@/components/game/port/HaendlerPanel";
+import MarktplatzPanel from "@/components/game/port/MarktplatzPanel";
+import SchiffshaendlerPanel from "@/components/game/port/SchiffshaendlerPanel";
+import AusruestungPanel from "@/components/game/port/AusruestungPanel";
+import AuftraegePanel from "@/components/game/port/AuftraegePanel";
 import { useGameState } from "@/hooks/useGameState";
+import { useEconomy } from "@/hooks/useEconomy";
+import { availableServices, serviceAvailability, SERVICE_IDS } from "@/lib/portServices";
 
 const PARCHMENT = "https://media.base44.com/images/public/6a43defde92c0d47de02330a/ebfe1567b_generated_image.png";
 
@@ -27,7 +32,6 @@ export default function Game() {
   const { data, loading, error, reload } = useGameState();
   const [active, setActive] = useState("uebersicht");
   const [selectedPortId, setSelectedPortId] = useState(null);
-  const [modal, setModal] = useState(null);
   const [started, setStarted] = useState(false);
 
   const [selectedShipId, setSelectedShipId] = useState(null);
@@ -50,6 +54,15 @@ export default function Game() {
 
   // Reisen-Simulation (physische Bewegung über die Karte).
   const { sailing, shipOverrides, startVoyage } = useVoyages(ports);
+
+  // Spieler-Wirtschaft (Gold/Ladung) — Client-Schicht bis zum Wirtschafts-Backend.
+  const economy = useEconomy(data?.player);
+  const effectivePlayer = data?.player ? { ...data.player, gold: economy.effectiveGold } : null;
+
+  // Standortabhängige Hafendienste des gewählten Hafens.
+  const services = useMemo(() => availableServices(selectedPort), [selectedPort]);
+  const svcAvailability = useMemo(() => serviceAvailability(selectedPort), [selectedPort]);
+  const activeService = SERVICE_IDS.includes(active) && svcAvailability[active] ? active : null;
 
   // Schiffs-Ansicht: Backend-Schiffe + laufende Reise-Überschreibungen.
   const ships = useMemo(() => {
@@ -132,14 +145,8 @@ export default function Game() {
     ];
   }, [sailing.length]);
 
-  const handleQuickAction = (id) => {
-    if (id === "trade") setModal("trade");
-    else if (id === "build") setModal("build");
-    else if (id === "contract") setModal("contract");
-    else if (id === "report") toast({ title: "Bericht", description: "Berichtseditor folgt in einem späteren Schritt." });
-    else if (id === "diplomacy") setActive("diplomatie");
-    else if (id === "market") setActive("markt");
-  };
+  // Aktionsleiste steuert direkt die Hafendienste (bzw. Diplomatie).
+  const handleQuickAction = (id) => setActive(id);
 
   if (!started) {
     return <StartScreen ready={!loading && !error} onStart={() => setStarted(true)} />;
@@ -169,10 +176,10 @@ export default function Game() {
       <div className="absolute inset-0 bg-[var(--wood-deep)]/90" />
 
       <div className="relative z-10 flex flex-col w-full h-full">
-        <StatusBar player={data.player} world={data.world} factionByCode={data.factionByCode} />
+        <StatusBar player={effectivePlayer} world={data.world} factionByCode={data.factionByCode} />
 
         <div className="flex-1 flex min-h-0 min-w-0">
-          <Sidebar active={active} onSelect={setActive} overview={overview} />
+          <Sidebar active={active} onSelect={setActive} overview={overview} portName={selectedPort?.name} services={services} />
 
           <div className="flex-1 flex flex-col min-w-0">
             {active === "schiffe" ? (
@@ -194,6 +201,28 @@ export default function Game() {
               ) : active === "wiki" ? (
                 <div className="flex-1 min-w-0 overflow-y-auto thin-scroll">
                   <WikiPanel />
+                </div>
+              ) : active === "diplomatie" ? (
+                <div className="flex-1 min-w-0 overflow-y-auto thin-scroll">
+                  <DiplomatiePanel factions={data.factions} player={data.player} />
+                </div>
+              ) : activeService ? (
+                <div className="flex-1 min-w-0">
+                  {activeService === "handel" && (
+                    <HaendlerPanel port={selectedPort} factionByCode={data.factionByCode} economy={economy} onBack={() => setActive("uebersicht")} />
+                  )}
+                  {activeService === "marktplatz" && (
+                    <MarktplatzPanel port={selectedPort} factionByCode={data.factionByCode} player={data.player} onBack={() => setActive("uebersicht")} />
+                  )}
+                  {activeService === "schiffshaendler" && (
+                    <SchiffshaendlerPanel port={selectedPort} factionByCode={data.factionByCode} economy={economy} onBack={() => setActive("uebersicht")} />
+                  )}
+                  {activeService === "ausruestung" && (
+                    <AusruestungPanel port={selectedPort} factionByCode={data.factionByCode} economy={economy} onBack={() => setActive("uebersicht")} />
+                  )}
+                  {activeService === "auftraege" && (
+                    <AuftraegePanel port={selectedPort} factionByCode={data.factionByCode} onBack={() => setActive("uebersicht")} />
+                  )}
                 </div>
               ) : (
                 <>
@@ -229,7 +258,7 @@ export default function Game() {
 
             <div className="shrink-0 px-1 pb-1">
               <div className="panel rounded-sm flex items-center justify-between px-3 py-1.5">
-                <QuickActions onAction={handleQuickAction} />
+                <QuickActions onAction={handleQuickAction} availability={svcAvailability} />
                 <WorldUpdateTimer lastTickAt={data.world?.last_tick_at} />
               </div>
             </div>
@@ -238,10 +267,6 @@ export default function Game() {
           </div>
         </div>
       </div>
-
-      <TradeModal open={modal === "trade"} onOpenChange={(o) => !o && setModal(null)} />
-      <BuildShipModal open={modal === "build"} onOpenChange={(o) => !o && setModal(null)} />
-      <CreateContractModal open={modal === "contract"} onOpenChange={(o) => !o && setModal(null)} />
     </div>
   );
 }
