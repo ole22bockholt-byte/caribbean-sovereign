@@ -94,7 +94,7 @@ const INITIAL_SHIPS = [
 
 function Harness() {
   const [active, setActive] = useState("uebersicht");
-  const [selectedPortId, setSelectedPortId] = useState("kingston");
+  const [selectedPortId, setSelectedPortId] = useState("port_royal");
   const [selectedShipId, setSelectedShipId] = useState("s1");
   const demoInitialized = useRef(false);
 
