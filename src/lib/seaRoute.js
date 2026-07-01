@@ -7,9 +7,12 @@
 // Inseln, statt über Land zu fahren.
 // =============================================================================
 
-import { isBlocked, segmentInWater } from "./mapGeography";
+import { isBlocked } from "./mapGeography.js";
 
-const GRID = 100; // Zellen je Achse (Zellgröße = 1 Einheit)
+const GRID = 160; // Zellen je Achse
+const CELL = 100 / GRID; // Zellgröße in Karteneinheiten
+const CLEARANCE = 0.45; // Sicherheitsabstand zur Küste beim Glätten
+const GRID_MARGIN = 0.35; // Küstenpuffer beim Rastern (schmale Kanäle bleiben frei)
 
 // Reisedauer aus der Weglänge (Einheiten). Client-seitige Taktung, damit die
 // Bewegung sichtbar ist: kurze Sprünge ~einige Sekunden, Querungen ~1 Minute.
@@ -27,14 +30,28 @@ function grid() {
   for (let r = 0; r < GRID; r++) {
     const row = new Uint8Array(GRID);
     for (let c = 0; c < GRID; c++) {
-      row[c] = isBlocked(c + 0.5, r + 0.5) ? 1 : 0;
+      row[c] = isBlocked((c + 0.5) * CELL, (r + 0.5) * CELL, GRID_MARGIN) ? 1 : 0;
     }
     blockedGrid.push(row);
   }
   return blockedGrid;
 }
 
-const cellOf = (v) => Math.min(GRID - 1, Math.max(0, Math.floor(v)));
+const cellOf = (v) => Math.min(GRID - 1, Math.max(0, Math.floor(v / CELL)));
+const centerOf = (idx) => (idx + 0.5) * CELL;
+
+// Ist die Strecke a→b frei (Wasser inkl. Küstenpuffer)? Feine Abtastung.
+function segmentClear(a, b, margin = CLEARANCE) {
+  const dx = b.x - a.x;
+  const dy = b.y - a.y;
+  const dist = Math.hypot(dx, dy);
+  const n = Math.max(1, Math.ceil(dist / 0.25));
+  for (let i = 0; i <= n; i++) {
+    const t = i / n;
+    if (isBlocked(a.x + dx * t, a.y + dy * t, margin)) return false;
+  }
+  return true;
+}
 
 // Nächste freie (Wasser-)Zelle per Spiralsuche.
 function nearestOpen(g, col, row) {
@@ -106,13 +123,14 @@ function astar(g, start, goal) {
   return null;
 }
 
-// Pfad per Sichtlinie glätten: verbinde Wegpunkte, solange die Strecke Wasser ist.
+// Pfad per Sichtlinie glätten: Wegpunkte überspringen, solange die direkte
+// Strecke frei bleibt (Küstenpuffer). Arbeitet ausschließlich auf Wasserpunkten.
 function smooth(points) {
-  if (points.length <= 2) return points;
+  if (points.length <= 2) return points.slice();
   const out = [points[0]];
   let anchor = 0;
   for (let i = 2; i < points.length; i++) {
-    if (!segmentInWater(points[anchor], points[i])) {
+    if (!segmentClear(points[anchor], points[i])) {
       out.push(points[i - 1]);
       anchor = i - 1;
     }
@@ -141,10 +159,11 @@ export function computeSeaRoute(from, to) {
   if (!cellPath) {
     points = [{ x: from.x, y: from.y }, { x: to.x, y: to.y }];
   } else {
-    const mid = cellPath.map(([c, r]) => ({ x: c + 0.5, y: r + 0.5 }));
-    // Echte Hafenpunkte an den Enden verwenden.
-    const raw = [{ x: from.x, y: from.y }, ...mid, { x: to.x, y: to.y }];
-    points = smooth(raw);
+    // Wasser-Wegpunkte (Zellmittelpunkte) glätten, dann die echten Hafenpunkte
+    // an den Enden anhängen — so bleibt die Mittelstrecke garantiert im Wasser.
+    const mid = cellPath.map(([c, r]) => ({ x: centerOf(c), y: centerOf(r) }));
+    const smoothed = smooth(mid);
+    points = [{ x: from.x, y: from.y }, ...smoothed, { x: to.x, y: to.y }];
   }
   const length = routeLength(points);
   return { points, length, durationMs: estimateDurationMs(length) };

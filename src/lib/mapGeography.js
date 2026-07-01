@@ -143,7 +143,7 @@ export const PORT_CATALOG = {
   tortuga: { name: "Tortuga", faction: "pirate", type: "pirate", x: 54.5, y: 32.4 },
   petit_goave: { name: "Petit-Goâve", faction: "fr", type: "harbor", x: 51.5, y: 45 },
   willemstad: { name: "Willemstad", faction: "nl", type: "harbor", x: 60.5, y: 73.5 },
-  nassau: { name: "Nassau", faction: "neutral", type: "neutral", x: 60, y: 11 },
+  nassau: { name: "Nassau", faction: "neutral", type: "neutral", x: 58, y: 15.4 },
   // --- Historisch ergänzte Häfen ---
   cap_francais: { name: "Cap-Français", faction: "fr", type: "fort", x: 53, y: 34.6 },
   san_juan: { name: "San Juan", faction: "es", type: "fort", x: 77, y: 39.3 },

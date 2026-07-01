@@ -16,6 +16,11 @@ import { PORT_CATALOG } from "@/lib/mapGeography";
 import { computeSeaRoute } from "@/lib/seaRoute";
 import { useVoyages } from "@/hooks/useVoyages";
 
+// Dev-Reset: mit ?reset in der URL gespeicherte Reisen verwerfen (sauberer Start).
+if (typeof location !== "undefined" && location.search.includes("reset")) {
+  try { localStorage.removeItem("karibik1765.voyages.v1"); } catch { /* ignore */ }
+}
+
 const FACTIONS = {
   gb: { code: "gb", name: "Großbritannien", color: "#c8102e" },
   es: { code: "es", name: "Spanien", color: "#f1bf00" },
