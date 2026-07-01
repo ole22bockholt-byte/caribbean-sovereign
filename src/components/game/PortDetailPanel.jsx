@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import { Anchor, TrendingUp, TrendingDown, Minus, ArrowRight, Navigation2, Ship } from "lucide-react";
 import { factionFlag } from "@/lib/gameData";
 import { securityLevel, levelFor, formatCountdown } from "@/lib/format";
+import { asset } from "@/lib/assets";
 
-const HARBOR_IMG = "https://media.base44.com/images/public/6a43defde92c0d47de02330a/c5394dcd2_generated_image.png";
+const HARBOR_IMG = asset("assets/harbor.png");
 
 const TABS = [
   { id: "uebersicht", label: "Übersicht" },

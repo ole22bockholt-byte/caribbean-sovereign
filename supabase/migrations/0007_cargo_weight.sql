@@ -1,5 +1,5 @@
 -- ============================================================================
--- Karibik 1765 — Migration 0006: physischer Laderaum (Tonnen)
+-- Karibik 1765 — Migration 0007: physischer Laderaum (Tonnen)
 -- Waren erhalten ein Gewicht in Tonnen je Einheit; die vorhandene Spalte
 -- ships.cargo_capacity wird als Maximalkapazität in Tonnen interpretiert.
 -- Zusammen bilden sie den „physischen" Laderaum: Ladung belegt Platz nach

@@ -4,7 +4,6 @@ import { queryClientInstance } from '@/lib/query-client'
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
-import { appParams } from '@/lib/app-params';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import ScrollToTop from './components/ScrollToTop';
 import ProtectedRoute from '@/components/ProtectedRoute';
@@ -27,20 +26,12 @@ const AuthenticatedApp = () => {
     );
   }
 
-  // Handle authentication errors
-  if (authError) {
-    if (authError.type === 'user_not_registered') {
-      return <UserNotRegisteredError />;
-    }
-    // Wenn ein Token vorliegt, der Zugriff aber weiterhin verweigert wird, NICHT
-    // erneut zur (gehosteten) Anmeldung weiterleiten – das erzeugte sonst eine
-    // Endlosschleife (Login -> Rücksprung -> auth_required -> Login ...).
-    // Stattdessen den klaren "Zugriff eingeschränkt"-Hinweis zeigen.
-    if (authError.type === 'auth_required' && appParams.token) {
-      return <UserNotRegisteredError />;
-    }
-    // Ohne Token normal weiterrendern: die App-eigene /login-Seite wird über den
-    // ProtectedRoute erreicht, statt automatisch zur gehosteten SSO zu springen.
+  // Auth-Fehler behandeln. In der Supabase-Welt gibt es keine gehostete SSO-
+  // Weiterleitung mehr: Unauthentifizierte werden über den ProtectedRoute auf die
+  // App-eigene /login-Seite geführt. Nur der (theoretische) "user_not_registered"-
+  // Fall zeigt den klaren "Zugriff eingeschränkt"-Hinweis.
+  if (authError && authError.type === 'user_not_registered') {
+    return <UserNotRegisteredError />;
   }
 
   // Render the main app
@@ -59,12 +50,16 @@ const AuthenticatedApp = () => {
 };
 
 
+// Basis-Pfad für das Routing. Auf GitHub Pages (Projekt-Seiten) läuft die App unter
+// einem Unterpfad (z. B. /caribbean-sovereign/); Vite liefert ihn über BASE_URL.
+const routerBasename = import.meta.env.BASE_URL.replace(/\/$/, "") || "/";
+
 function App() {
 
   return (
     <AuthProvider>
       <QueryClientProvider client={queryClientInstance}>
-        <Router>
+        <Router basename={routerBasename}>
           <ScrollToTop />
           <AuthenticatedApp />
         </Router>

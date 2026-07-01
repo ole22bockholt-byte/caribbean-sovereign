@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+import { invokeFunction } from "@/api/supabaseClient";
 
 // =============================================================================
 // useWikiShips — lädt den Schiffstypen-Katalog aus der Backend-Funktion
@@ -15,10 +15,10 @@ export function useWikiShips() {
     let cancelled = false;
     (async () => {
       try {
-        const res = await base44.functions.invoke("wikiShips", {});
+        const res = await invokeFunction("wikiShips");
         if (cancelled) return;
-        setShips(res.data?.ships || []);
-        if (res.data?.configured === false || res.data?.message) setNotice(res.data.message);
+        setShips(res?.ships || []);
+        if (res?.configured === false || res?.message) setNotice(res.message);
       } catch {
         if (!cancelled) setNotice("Schiffsdaten konnten nicht geladen werden.");
       } finally {

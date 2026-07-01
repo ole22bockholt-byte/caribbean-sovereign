@@ -8,6 +8,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import ReactDOM from "react-dom/client";
 import "@/index.css";
+import { asset } from "@/lib/assets";
 import { Coins, Package } from "lucide-react";
 import { Toaster } from "@/components/ui/toaster";
 import { toast } from "@/components/ui/use-toast";
@@ -68,7 +69,7 @@ const PORTS = Object.entries(PORT_CATALOG).map(([code, c]) => ({
 
 const PLAYER = { id: "dev", companyName: "Freie Handelskompanie", gold: 60000, influence: 1500, factionCode: "gb" };
 
-const IMG = "https://media.base44.com/images/public/6a43defde92c0d47de02330a/c5394dcd2_generated_image.png";
+const IMG = asset("assets/harbor.png");
 const MOCK_SHIPS = [
   { id: "schaluppe", name: "Schaluppe", class: "Leicht", summary: "Wendiges Aufklärungsschiff für schnelle Routen.", price: 8000, imageUrl: IMG, stats: { Rumpf: 40, Ladung: 30, Tempo: 9, Crew: 25 } },
   { id: "brigg", name: "Brigg", class: "Brigg", summary: "Vielseitiger Begleiter für Handel und Gefecht.", price: 15000, imageUrl: IMG, stats: { Rumpf: 90, Ladung: 70, Tempo: 8, Crew: 60 } },

@@ -9,6 +9,8 @@
 // aus dem Spielzustand übernommen.
 // =============================================================================
 
+import { asset } from "./assets";
+
 // Dummy-Fregatte „Resolute" — wird in transformGameState allen Nutzern angehängt.
 export const DUMMY_RESOLUTE = {
   id: "dummy-resolute",
@@ -86,8 +88,7 @@ const DEFAULT_ORDERS = [
   { title: "Eskortenauftrag: Konvoi schützen", sub: "Willemstad → Port-au-Prince", eta: "noch 7 Tage" },
 ];
 
-const CAPTAIN_PORTRAIT =
-  "https://media.base44.com/images/public/6a43defde92c0d47de02330a/ebfe1567b_generated_image.png";
+const CAPTAIN_PORTRAIT = asset("assets/parchment.png");
 
 // Baut das vollständige Detailmodell für ein Schiff. Nutzt echte Felder, wo
 // vorhanden, und ergänzt Platzhalter für noch nicht modellierte Systeme.

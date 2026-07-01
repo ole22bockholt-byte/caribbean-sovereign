@@ -1,12 +1,13 @@
 import React, { useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { invokeFunction } from "@/api/supabaseClient";
 import { Anchor, Coins, Ship, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { factionFlag } from "@/lib/gameData";
 import { formatGold } from "@/lib/format";
+import { asset } from "@/lib/assets";
 
-const PARCHMENT = "https://media.base44.com/images/public/6a43defde92c0d47de02330a/ebfe1567b_generated_image.png";
+const PARCHMENT = asset("assets/parchment.png");
 const STARTING_GOLD = 25000;
 
 // Vollbild-Onboarding: Spieler wählt Fraktion + Starthafen und benennt seine Kompanie.
@@ -22,12 +23,11 @@ export default function Onboarding({ factions, ports, onDone }) {
     setSubmitting(true);
     setError(null);
     try {
-      const res = await base44.functions.invoke("createPlayer", {
+      await invokeFunction("createPlayer", {
         faction_code: factionCode,
         home_port_code: portCode,
         company_name: companyName,
       });
-      if (res.data?.error) throw new Error(res.data.error);
       onDone();
     } catch (e) {
       setError(e.message || "Erstellung fehlgeschlagen.");

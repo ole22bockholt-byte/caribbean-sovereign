@@ -1,5 +1,5 @@
 -- ============================================================================
--- Karibik 1765 — Migration 0005: historische Häfen (Stand ~1765)
+-- Karibik 1765 — Migration 0006: historische Häfen (Stand ~1765)
 -- Bringt die Häfen auf den erweiterten, geografisch korrekten Satz. x/y sind
 -- Kartenkoordinaten (0..100) und liegen deckungsgleich zu den Landmassen in
 -- src/lib/mapGeography.js. Idempotent (upsert auf ports.code); bestehende

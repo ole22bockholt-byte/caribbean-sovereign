@@ -23,11 +23,12 @@ import SchiffshaendlerPanel from "@/components/game/port/SchiffshaendlerPanel";
 import AusruestungPanel from "@/components/game/port/AusruestungPanel";
 import AuftraegePanel from "@/components/game/port/AuftraegePanel";
 import { useGameState } from "@/hooks/useGameState";
+import { asset } from "@/lib/assets";
 import { useEconomy } from "@/hooks/useEconomy";
 import { availableServices, serviceAvailability, SERVICE_IDS } from "@/lib/portServices";
 import { cargoWeight } from "@/lib/goodsData";
 
-const PARCHMENT = "https://media.base44.com/images/public/6a43defde92c0d47de02330a/ebfe1567b_generated_image.png";
+const PARCHMENT = asset("assets/parchment.png");
 
 export default function Game() {
   const { data, loading, error, reload } = useGameState();
