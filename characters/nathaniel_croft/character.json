@@ -1,0 +1,23 @@
+{
+  "name": "Nathaniel Croft",
+  "category": "captain",
+  "rank": "Kapitän",
+  "factionCode": "gb",
+  "experience": "Veteran",
+  "rarity": "rare",
+  "status": "assigned",
+  "assignedShip": "HMS Resolute",
+  "skills": {
+    "Navigation": 4,
+    "Geschütz": 4,
+    "Seemannschaft": 3,
+    "Führung": 3
+  },
+  "uniqueAbilities": [
+    {
+      "name": "Sturmreiter",
+      "description": "Verliert bei schwerem Wetter keine Geschwindigkeit und segelt sicher durch Stürme."
+    }
+  ],
+  "summary": "Ein ruhiger, erfahrener Kapitän mit einem Gespür für unruhige See."
+}
