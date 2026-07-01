@@ -8,7 +8,7 @@ export default function ShipCard({ ship, onOpen }) {
       onClick={onOpen}
       className="panel text-left p-3 hover:border-brass transition-colors flex flex-col gap-2 group"
     >
-      <div className="aspect-[16/10] rounded-sm overflow-hidden bg-wood-light border border-line flex items-center justify-center">
+      <div className="aspect-[16/10] rounded-sm overflow-hidden picture-ground border border-line flex items-center justify-center">
         {ship.imageUrl ? (
           <img src={ship.imageUrl} alt={ship.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
         ) : (

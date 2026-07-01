@@ -16,6 +16,12 @@
   --line: #3a2c1c;           /* hairline border */
   --blood: #9b1c2e;          /* danger / enemy */
   --sea: #0c1820;            /* deep sea */
+
+  /* Texturen (auswechselbar) — Messing-Outline, Holzfläche, Bild-Hintergrund */
+  --tex-outline: url('https://media.base44.com/images/public/6a43defde92c0d47de02330a/434f9e695_outline.png');
+  --tex-background: url('https://media.base44.com/images/public/6a43defde92c0d47de02330a/5b637d69e_background.png');
+  --tex-pictureground: url('https://media.base44.com/images/public/6a43defde92c0d47de02330a/82f85f195_pictureground.png');
+  --outline-width: 6px;      /* Breite der Messing-Outline */
 }
 
 .font-display { font-family: 'Cinzel', serif; }
@@ -32,15 +38,31 @@
 .border-line { border-color: var(--line); }
 .border-brass { border-color: var(--brass); }
 
-/* Brass-ruled panel with subtle inner glow */
+/* Panel: breite Messing-Outline (outline.png) als Rahmen via border-image,
+   dunkle Holztextur (background.png) als Innenfläche. */
 .panel {
   background-color: var(--wood);
-  border: 1px solid var(--line);
-  box-shadow: inset 0 1px 0 rgba(202,166,90,0.08), 0 8px 24px rgba(0,0,0,0.5);
+  background-image: var(--tex-background);
+  background-size: cover;
+  background-position: center;
+  border: var(--outline-width) solid var(--line);
+  border-image: var(--tex-outline) 30 round;
+  border-image-width: var(--outline-width);
+  box-shadow: inset 0 1px 0 rgba(202,166,90,0.08), 0 8px 24px rgba(0,0,0,0.6);
 }
 .panel-header {
-  border-bottom: 1px solid var(--line);
-  background: linear-gradient(180deg, rgba(202,166,90,0.06), transparent);
+  border-bottom: var(--outline-width) solid var(--line);
+  border-image: var(--tex-outline) 30 round;
+  border-image-slice: 30;
+  border-image-width: 0 0 var(--outline-width) 0;
+}
+
+/* Flächen hinter Bildern (z.B. Wiki-Schiffe): eigene Textur (pictureground.png) */
+.picture-ground {
+  background-color: var(--wood-light);
+  background-image: var(--tex-pictureground);
+  background-size: cover;
+  background-position: center;
 }
 
 /* Brass double rule used under section titles */

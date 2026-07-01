@@ -25,6 +25,15 @@ Mehrspieler-Weltsystem — eine gemeinsame Welt entwickelt sich über die Zeit w
   EB Garamond). Neue UI muss zu diesem Stil passen — keine generischen weißen Cards.
   Token-Klassen verwenden (`bg-wood`, `text-brass`, `panel`, `font-display` …), keine
   hartkodierten Farben/Fonts.
+- **Texturen (zentral in `src/index.css`)**: Drei auswechselbare Bild-Texturen als
+  CSS-Variablen — `--tex-outline` (Messing-Rahmen `outline.png`), `--tex-background`
+  (dunkle Holzfläche `background.png`), `--tex-pictureground` (Fläche hinter Bildern
+  `pictureground.png`). Die `.panel`-Klasse nutzt `--tex-outline` als **breite Outline**
+  (`border-image`, Breite über `--outline-width`) und `--tex-background` als Innenfläche.
+  Flächen **hinter Bildern** (z.B. Wiki-Schiffe: `ShipCard`-Thumbnail, `ShipDetail`-Hero,
+  PNG-Grafik) nutzen die Klasse `.picture-ground` (`--tex-pictureground`). Neue Bild-Flächen
+  immer `.picture-ground`, neue Panels immer `.panel` verwenden — Texturen nur zentral in
+  `src/index.css` tauschen.
 
 ### Architektur (Quelle der Wahrheit)
 - **Frontend**: React + Tailwind + shadcn/ui. Hauptseite `src/pages/Game.jsx` (Route `/`),

@@ -20,7 +20,7 @@ export default function ShipDetail({ ship, onBack }) {
 
       <div className="panel overflow-hidden">
         {/* Hero: Vorschauvideo als Hintergrund, sonst Bild, sonst Platzhalter */}
-        <div className="relative aspect-[21/9] bg-wood-light border-b border-line overflow-hidden flex items-center justify-center">
+        <div className="relative aspect-[21/9] picture-ground border-b border-line overflow-hidden flex items-center justify-center">
           {ship.videoUrl ? (
             <video
               src={ship.videoUrl}
@@ -47,7 +47,7 @@ export default function ShipDetail({ ship, onBack }) {
         <div className="p-5">
           {/* Schiffsgrafik (PNG) zusätzlich, wenn ein Video als Hintergrund läuft */}
           {ship.videoUrl && ship.imageUrl && (
-            <div className="mb-5 rounded-sm overflow-hidden border border-line bg-wood-light">
+            <div className="mb-5 rounded-sm overflow-hidden border border-line picture-ground">
               <img src={ship.imageUrl} alt={ship.name} className="w-full max-h-72 object-contain" />
             </div>
           )}
